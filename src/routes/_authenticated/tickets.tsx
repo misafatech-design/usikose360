@@ -81,8 +81,8 @@ function MyTickets() {
                 </Badge>
               </div>
               <div className="shrink-0 text-center">
-                <div className="rounded-lg bg-foreground p-2">
-                  <QRCode value={t.code} size={96} bgColor="transparent" fgColor="hsl(var(--background))" />
+                <div className="rounded-lg bg-foreground p-2 text-background">
+                  <QRCode value={t.code} size={96} bgColor="transparent" fgColor="currentColor" />
                 </div>
                 <p className="mt-2 font-mono text-sm font-semibold tracking-widest">{t.code}</p>
                 <p className="mt-1 text-[11px] text-muted-foreground">

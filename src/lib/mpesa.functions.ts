@@ -2,16 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import {
-  b2cPayment,
-  failOrder,
-  fulfillOrder,
-  generateSecurityCredential,
-  getActiveConfig,
-  stkPush,
-  stkQuery,
-  type MpesaConfigRow,
-} from "./mpesa.server";
+import type { MpesaConfigRow } from "./mpesa.server";
+
+const srv = () => import("./mpesa.server");
 
 function origin() {
   try {
@@ -120,7 +113,7 @@ export const saveMpesaSettings = createServerFn({ method: "POST" })
     if (data.b2c_initiator_password) {
       if (!data.b2c_certificate) throw new Error("Paste the M-Pesa public certificate to generate the credential");
       try {
-        patch.b2c_security_credential = generateSecurityCredential(
+        patch.b2c_security_credential = (await srv()).generateSecurityCredential(
           data.b2c_certificate,
           data.b2c_initiator_password,
         );
@@ -143,7 +136,7 @@ export const saveMpesaSettings = createServerFn({ method: "POST" })
   });
 
 export const getPaymentMode = createServerFn({ method: "GET" }).handler(async () => {
-  const c = await getActiveConfig();
+  const c = await (await srv()).getActiveConfig();
   return { live: !!c, environment: c?.environment ?? null };
 });
 
@@ -176,7 +169,7 @@ export const startCheckout = createServerFn({ method: "POST" })
     const total = Number(tt.price_kes) * data.quantity;
 
     const { data: claims } = await context.supabase.auth.getUser();
-    const config = await getActiveConfig();
+    const config = await (await srv()).getActiveConfig();
 
     let orderId = data.orderId;
     if (orderId) {
@@ -215,12 +208,12 @@ export const startCheckout = createServerFn({ method: "POST" })
 
     // Free tickets or no M-Pesa configured → confirm without charging
     if (total <= 0 || !config) {
-      await fulfillOrder(orderId!, null, total <= 0 ? "Free ticket" : "Demo — no charge");
+      await (await srv()).fulfillOrder(orderId!, null, total <= 0 ? "Free ticket" : "Demo — no charge");
       return { orderId: orderId!, mode: "instant" as const };
     }
 
     try {
-      const res = await stkPush(config, {
+      const res = await (await srv()).stkPush(config, {
         amount: total,
         phone,
         reference: "USIKOSE360",
@@ -234,7 +227,7 @@ export const startCheckout = createServerFn({ method: "POST" })
       return { orderId: orderId!, mode: "stk" as const };
     } catch (e) {
       const msg = e instanceof Error ? e.message : "M-Pesa request failed";
-      await failOrder(orderId!, -1, msg);
+      await (await srv()).failOrder(orderId!, -1, msg);
       throw new Error(msg);
     }
   });
@@ -253,12 +246,12 @@ export const getOrderStatus = createServerFn({ method: "POST" })
 
     // Fallback: ask Safaricom directly if the callback is slow
     if (order.status === "pending" && data.query && order.checkout_request_id) {
-      const config = await getActiveConfig();
+      const config = await (await srv()).getActiveConfig();
       if (config) {
-        const r = await stkQuery(config, order.checkout_request_id).catch(() => null);
+        const r = await (await srv()).stkQuery(config, order.checkout_request_id).catch(() => null);
         if (r) {
-          if (r.resultCode === 0) await fulfillOrder(order.id, null, r.resultDesc);
-          else await failOrder(order.id, r.resultCode, r.resultDesc);
+          if (r.resultCode === 0) await (await srv()).fulfillOrder(order.id, null, r.resultDesc);
+          else await (await srv()).failOrder(order.id, r.resultCode, r.resultDesc);
           const { data: fresh } = await supabaseAdmin
             .from("orders")
             .select("status, result_desc, mpesa_receipt")
@@ -297,7 +290,7 @@ export const getPayoutSummary = createServerFn({ method: "GET" })
     const withdrawn = (payouts ?? [])
       .filter((p) => p.status !== "failed")
       .reduce((s, p) => s + Number(p.amount_kes), 0);
-    const config = await getActiveConfig();
+    const config = await (await srv()).getActiveConfig();
     return {
       earned,
       withdrawn,
@@ -315,7 +308,7 @@ export const requestPayout = createServerFn({ method: "POST" })
     if (!isOrg) throw new Error("Only organizers can withdraw");
     const phone = normalizePhone(data.phone);
     if (!/^254(7|1)\d{8}$/.test(phone)) throw new Error("Enter a valid Kenyan phone number");
-    const config = await getActiveConfig();
+    const config = await (await srv()).getActiveConfig();
     if (!config) throw new Error("M-Pesa is not configured");
 
     const summary = await getPayoutSummaryInternal(context.userId);
@@ -337,7 +330,7 @@ export const requestPayout = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
     try {
-      const r = await b2cPayment(config, {
+      const r = await (await srv()).b2cPayment(config, {
         amount: data.amount,
         phone,
         originatorId,

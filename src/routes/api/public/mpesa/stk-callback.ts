@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { failOrder, fulfillOrder, getConfigByToken } from "@/lib/mpesa.server";
 
 const ok = () => Response.json({ ResultCode: 0, ResultDesc: "Accepted" });
 
@@ -7,6 +6,7 @@ export const Route = createFileRoute("/api/public/mpesa/stk-callback")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const { failOrder, fulfillOrder, getConfigByToken } = await import("@/lib/mpesa.server");
         const token = new URL(request.url).searchParams.get("token") ?? "";
         const config = await getConfigByToken(token);
         if (!config) return new Response("Forbidden", { status: 403 });

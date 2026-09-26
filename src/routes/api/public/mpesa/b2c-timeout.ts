@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getConfigByToken } from "@/lib/mpesa.server";
 
 export const Route = createFileRoute("/api/public/mpesa/b2c-timeout")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const { getConfigByToken } = await import("@/lib/mpesa.server");
         const token = new URL(request.url).searchParams.get("token") ?? "";
         if (!(await getConfigByToken(token))) return new Response("Forbidden", { status: 403 });
         const body = (await request.json().catch(() => null)) as any;

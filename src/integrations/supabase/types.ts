@@ -14,16 +14,284 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      events: {
+        Row: {
+          category: string
+          city: string
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          organizer_id: string
+          starts_at: string
+          status: Database["public"]["Enums"]["event_status"]
+          summary: string | null
+          title: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          category?: string
+          city?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          organizer_id: string
+          starts_at: string
+          status?: Database["public"]["Enums"]["event_status"]
+          summary?: string | null
+          title: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          category?: string
+          city?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          organizer_id?: string
+          starts_at?: string
+          status?: Database["public"]["Enums"]["event_status"]
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          buyer_email: string | null
+          buyer_id: string | null
+          buyer_name: string | null
+          created_at: string
+          event_id: string
+          id: string
+          mpesa_phone: string | null
+          mpesa_reference: string | null
+          quantity: number
+          status: Database["public"]["Enums"]["order_status"]
+          ticket_type_id: string
+          total_kes: number
+          updated_at: string
+        }
+        Insert: {
+          buyer_email?: string | null
+          buyer_id?: string | null
+          buyer_name?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          mpesa_phone?: string | null
+          mpesa_reference?: string | null
+          quantity?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          ticket_type_id: string
+          total_kes?: number
+          updated_at?: string
+        }
+        Update: {
+          buyer_email?: string | null
+          buyer_id?: string | null
+          buyer_name?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          mpesa_phone?: string | null
+          mpesa_reference?: string | null
+          quantity?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          ticket_type_id?: string
+          total_kes?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_ticket_type_id_fkey"
+            columns: ["ticket_type_id"]
+            isOneToOne: false
+            referencedRelation: "ticket_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          locale: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          locale?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          locale?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ticket_types: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_id: string
+          id: string
+          name: string
+          price_kes: number
+          quantity: number
+          sold: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_id: string
+          id?: string
+          name: string
+          price_kes?: number
+          quantity?: number
+          sold?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_id?: string
+          id?: string
+          name?: string
+          price_kes?: number
+          quantity?: number
+          sold?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_types_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tickets: {
+        Row: {
+          checked_in_at: string | null
+          code: string
+          created_at: string
+          event_id: string
+          holder_id: string | null
+          id: string
+          order_id: string
+          ticket_type_id: string
+        }
+        Insert: {
+          checked_in_at?: string | null
+          code?: string
+          created_at?: string
+          event_id: string
+          holder_id?: string | null
+          id?: string
+          order_id: string
+          ticket_type_id: string
+        }
+        Update: {
+          checked_in_at?: string | null
+          code?: string
+          created_at?: string
+          event_id?: string
+          holder_id?: string | null
+          id?: string
+          order_id?: string
+          ticket_type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tickets_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tickets_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tickets_ticket_type_id_fkey"
+            columns: ["ticket_type_id"]
+            isOneToOne: false
+            referencedRelation: "ticket_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "organizer" | "attendee"
+      event_status: "draft" | "published" | "cancelled" | "completed"
+      order_status: "pending" | "paid" | "failed" | "refunded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +418,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "organizer", "attendee"],
+      event_status: ["draft", "published", "cancelled", "completed"],
+      order_status: ["pending", "paid", "failed", "refunded"],
+    },
   },
 } as const

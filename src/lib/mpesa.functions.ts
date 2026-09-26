@@ -113,7 +113,7 @@ export const saveMpesaSettings = createServerFn({ method: "POST" })
     if (data.b2c_initiator_password) {
       if (!data.b2c_certificate) throw new Error("Paste the M-Pesa public certificate to generate the credential");
       try {
-        patch.b2c_security_credential = (await srv()).generateSecurityCredential(
+        patch["b2c_security_credential"] = (await srv()).generateSecurityCredential(
           data.b2c_certificate,
           data.b2c_initiator_password,
         );
@@ -222,7 +222,7 @@ export const startCheckout = createServerFn({ method: "POST" })
       });
       await supabaseAdmin
         .from("orders")
-        .update({ checkout_request_id: res.checkoutRequestId, merchant_request_id: res.merchantRequestId })
+        .update({ checkout_request_id: res.checkoutRequestId ?? null, merchant_request_id: res.merchantRequestId ?? null })
         .eq("id", orderId!);
       return { orderId: orderId!, mode: "stk" as const };
     } catch (e) {
@@ -337,7 +337,7 @@ export const requestPayout = createServerFn({ method: "POST" })
         remarks: "Usikose360 organizer payout",
         origin: origin(),
       });
-      await supabaseAdmin.from("payouts").update({ conversation_id: r.conversationId }).eq("id", payout.id);
+      await supabaseAdmin.from("payouts").update({ conversation_id: r.conversationId ?? null }).eq("id", payout.id);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Payout failed";
       await supabaseAdmin.from("payouts").update({ status: "failed", result_desc: msg }).eq("id", payout.id);

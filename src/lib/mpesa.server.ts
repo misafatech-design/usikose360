@@ -95,7 +95,7 @@ export async function stkPush(
       TransactionDesc: opts.description.slice(0, 13),
     }),
   });
-  const json = (await res.json().catch(() => ({}))) as Record<string, string>;
+  const json = (await res.json().catch(() => ({}))) as any;
   if (!res.ok || json.ResponseCode !== "0") {
     throw new Error(json.errorMessage || json.ResponseDescription || "Could not send M-Pesa prompt");
   }
@@ -116,7 +116,7 @@ export async function stkQuery(c: MpesaConfigRow, checkoutRequestId: string) {
       CheckoutRequestID: checkoutRequestId,
     }),
   });
-  const json = (await res.json().catch(() => ({}))) as Record<string, string>;
+  const json = (await res.json().catch(() => ({}))) as any;
   if (json.ResultCode === undefined) return null; // still processing
   return { resultCode: Number(json.ResultCode), resultDesc: json.ResultDesc ?? "" };
 }
@@ -148,7 +148,7 @@ export async function b2cPayment(
       Occasion: "Payout",
     }),
   });
-  const json = (await res.json().catch(() => ({}))) as Record<string, string>;
+  const json = (await res.json().catch(() => ({}))) as any;
   if (!res.ok || json.ResponseCode !== "0") {
     throw new Error(json.errorMessage || json.ResponseDescription || "Payout request failed");
   }

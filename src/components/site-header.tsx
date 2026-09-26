@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { CalendarPlus, LayoutDashboard, LogOut, Ticket } from "lucide-react";
+import { CalendarPlus, LayoutDashboard, LogOut, ScanLine, Settings, Ticket, Wallet } from "lucide-react";
 import { Logo } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 
 export function SiteHeader() {
-  const { user, isOrganizer, signOut } = useAuth();
+  const { user, isOrganizer, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
 
   const initials = (user?.email ?? "?").slice(0, 2).toUpperCase();
@@ -61,6 +61,19 @@ export function SiteHeader() {
                   <DropdownMenuItem onClick={() => navigate({ to: "/tickets" })}>
                     <Ticket className="h-4 w-4" /> My tickets
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate({ to: "/admit" })}>
+                    <ScanLine className="h-4 w-4" /> Admissions
+                  </DropdownMenuItem>
+                  {isOrganizer && (
+                    <DropdownMenuItem onClick={() => navigate({ to: "/payouts" })}>
+                      <Wallet className="h-4 w-4" /> Withdrawals
+                    </DropdownMenuItem>
+                  )}
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate({ to: "/admin/mpesa" })}>
+                      <Settings className="h-4 w-4" /> M-Pesa settings
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={async () => {

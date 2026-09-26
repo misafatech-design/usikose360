@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      event_staff: {
+        Row: {
+          added_by: string | null
+          created_at: string
+          email: string | null
+          event_id: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string
+          email?: string | null
+          event_id: string
+          id?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string
+          email?: string | null
+          event_id?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_staff_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           category: string
@@ -65,17 +103,90 @@ export type Database = {
         }
         Relationships: []
       }
+      mpesa_config: {
+        Row: {
+          b2c_command_id: string
+          b2c_consumer_key: string | null
+          b2c_consumer_secret: string | null
+          b2c_initiator_name: string | null
+          b2c_security_credential: string | null
+          b2c_shortcode: string | null
+          callback_base_url: string | null
+          callback_token: string
+          consumer_key: string | null
+          consumer_secret: string | null
+          created_at: string
+          environment: string
+          id: string
+          is_active: boolean
+          party_b: string | null
+          passkey: string | null
+          shortcode: string | null
+          transaction_type: string
+          updated_at: string
+        }
+        Insert: {
+          b2c_command_id?: string
+          b2c_consumer_key?: string | null
+          b2c_consumer_secret?: string | null
+          b2c_initiator_name?: string | null
+          b2c_security_credential?: string | null
+          b2c_shortcode?: string | null
+          callback_base_url?: string | null
+          callback_token?: string
+          consumer_key?: string | null
+          consumer_secret?: string | null
+          created_at?: string
+          environment: string
+          id?: string
+          is_active?: boolean
+          party_b?: string | null
+          passkey?: string | null
+          shortcode?: string | null
+          transaction_type?: string
+          updated_at?: string
+        }
+        Update: {
+          b2c_command_id?: string
+          b2c_consumer_key?: string | null
+          b2c_consumer_secret?: string | null
+          b2c_initiator_name?: string | null
+          b2c_security_credential?: string | null
+          b2c_shortcode?: string | null
+          callback_base_url?: string | null
+          callback_token?: string
+          consumer_key?: string | null
+          consumer_secret?: string | null
+          created_at?: string
+          environment?: string
+          id?: string
+          is_active?: boolean
+          party_b?: string | null
+          passkey?: string | null
+          shortcode?: string | null
+          transaction_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           buyer_email: string | null
           buyer_id: string | null
           buyer_name: string | null
+          checkout_request_id: string | null
           created_at: string
+          environment: string | null
           event_id: string
           id: string
+          merchant_request_id: string | null
           mpesa_phone: string | null
+          mpesa_receipt: string | null
           mpesa_reference: string | null
+          paid_at: string | null
           quantity: number
+          result_code: number | null
+          result_desc: string | null
           status: Database["public"]["Enums"]["order_status"]
           ticket_type_id: string
           total_kes: number
@@ -85,12 +196,19 @@ export type Database = {
           buyer_email?: string | null
           buyer_id?: string | null
           buyer_name?: string | null
+          checkout_request_id?: string | null
           created_at?: string
+          environment?: string | null
           event_id: string
           id?: string
+          merchant_request_id?: string | null
           mpesa_phone?: string | null
+          mpesa_receipt?: string | null
           mpesa_reference?: string | null
+          paid_at?: string | null
           quantity?: number
+          result_code?: number | null
+          result_desc?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           ticket_type_id: string
           total_kes?: number
@@ -100,12 +218,19 @@ export type Database = {
           buyer_email?: string | null
           buyer_id?: string | null
           buyer_name?: string | null
+          checkout_request_id?: string | null
           created_at?: string
+          environment?: string | null
           event_id?: string
           id?: string
+          merchant_request_id?: string | null
           mpesa_phone?: string | null
+          mpesa_receipt?: string | null
           mpesa_reference?: string | null
+          paid_at?: string | null
           quantity?: number
+          result_code?: number | null
+          result_desc?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           ticket_type_id?: string
           total_kes?: number
@@ -127,6 +252,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payouts: {
+        Row: {
+          amount_kes: number
+          conversation_id: string | null
+          created_at: string
+          environment: string | null
+          id: string
+          mpesa_receipt: string | null
+          organizer_id: string
+          originator_conversation_id: string | null
+          phone: string
+          result_code: number | null
+          result_desc: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount_kes: number
+          conversation_id?: string | null
+          created_at?: string
+          environment?: string | null
+          id?: string
+          mpesa_receipt?: string | null
+          organizer_id: string
+          originator_conversation_id?: string | null
+          phone: string
+          result_code?: number | null
+          result_desc?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount_kes?: number
+          conversation_id?: string | null
+          created_at?: string
+          environment?: string | null
+          id?: string
+          mpesa_receipt?: string | null
+          organizer_id?: string
+          originator_conversation_id?: string | null
+          phone?: string
+          result_code?: number | null
+          result_desc?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -285,6 +458,14 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_event_owner: {
+        Args: { _event_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_event_staff: {
+        Args: { _event_id: string; _user_id: string }
         Returns: boolean
       }
     }

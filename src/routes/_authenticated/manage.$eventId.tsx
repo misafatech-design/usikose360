@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 import { CheckCircle2, Coins, Ticket, Users } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
+import { StaffPanel } from "@/components/staff-panel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -170,6 +171,8 @@ function ManageEvent() {
             </div>
           ))}
         </div>
+
+        <StaffPanel eventId={eventId} />
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarDays, MapPin, QrCode } from "lucide-react";
+import { CalendarDays, MapPin } from "lucide-react";
+import QRCode from "react-qr-code";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -45,7 +46,7 @@ function MyTickets() {
       <div className="mx-auto max-w-4xl px-4 py-10">
         <h1 className="text-3xl font-extrabold">My tickets</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Show the code at the gate. Tickets are checked in by the organizer.
+          Show the code at the gate. Show the QR code at the gate to be admitted.
         </p>
 
         <div className="mt-8 space-y-4">
@@ -80,7 +81,9 @@ function MyTickets() {
                 </Badge>
               </div>
               <div className="shrink-0 text-center">
-                <QrCode className="mx-auto h-8 w-8 text-primary-glow" />
+                <div className="rounded-lg bg-foreground p-2 text-background">
+                  <QRCode value={t.code} size={96} bgColor="transparent" fgColor="currentColor" />
+                </div>
                 <p className="mt-2 font-mono text-sm font-semibold tracking-widest">{t.code}</p>
                 <p className="mt-1 text-[11px] text-muted-foreground">
                   {t.checked_in_at ? "Checked in" : "Valid"}

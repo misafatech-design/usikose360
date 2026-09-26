@@ -13,10 +13,17 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedPayoutsRouteImport } from './routes/_authenticated/payouts'
 import { Route as AuthenticatedTicketsRouteImport } from './routes/_authenticated/tickets'
 import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
+import { Route as AuthenticatedAdminMpesaRouteImport } from './routes/_authenticated/admin.mpesa'
+import { Route as AuthenticatedAdmitIndexRouteImport } from './routes/_authenticated/admit.index'
+import { Route as AuthenticatedAdmitEventIdRouteImport } from './routes/_authenticated/admit.$eventId'
 import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
 import { Route as AuthenticatedManageEventIdRouteImport } from './routes/_authenticated/manage.$eventId'
+import { Route as ApiPublicMpesaB2cResultRouteImport } from './routes/api/public/mpesa/b2c-result'
+import { Route as ApiPublicMpesaB2cTimeoutRouteImport } from './routes/api/public/mpesa/b2c-timeout'
+import { Route as ApiPublicMpesaStkCallbackRouteImport } from './routes/api/public/mpesa/stk-callback'
 import { Route as ApiPublicV1EventsRouteImport } from './routes/api/public/v1/events'
 
 const IndexRoute = IndexRouteImport.update({
@@ -38,6 +45,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPayoutsRoute = AuthenticatedPayoutsRouteImport.update({
+  id: '/payouts',
+  path: '/payouts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTicketsRoute = AuthenticatedTicketsRouteImport.update({
   id: '/tickets',
   path: '/tickets',
@@ -48,6 +60,22 @@ const EventsEventIdRoute = EventsEventIdRouteImport.update({
   path: '/events/$eventId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminMpesaRoute = AuthenticatedAdminMpesaRouteImport.update({
+  id: '/admin/mpesa',
+  path: '/admin/mpesa',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdmitIndexRoute = AuthenticatedAdmitIndexRouteImport.update({
+  id: '/admit/',
+  path: '/admit/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdmitEventIdRoute =
+  AuthenticatedAdmitEventIdRouteImport.update({
+    id: '/admit/$eventId',
+    path: '/admit/$eventId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedEventsNewRoute = AuthenticatedEventsNewRouteImport.update({
   id: '/events/new',
   path: '/events/new',
@@ -59,6 +87,23 @@ const AuthenticatedManageEventIdRoute =
     path: '/manage/$eventId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicMpesaB2cResultRoute = ApiPublicMpesaB2cResultRouteImport.update({
+  id: '/api/public/mpesa/b2c-result',
+  path: '/api/public/mpesa/b2c-result',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicMpesaB2cTimeoutRoute =
+  ApiPublicMpesaB2cTimeoutRouteImport.update({
+    id: '/api/public/mpesa/b2c-timeout',
+    path: '/api/public/mpesa/b2c-timeout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicMpesaStkCallbackRoute =
+  ApiPublicMpesaStkCallbackRouteImport.update({
+    id: '/api/public/mpesa/stk-callback',
+    path: '/api/public/mpesa/stk-callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicV1EventsRoute = ApiPublicV1EventsRouteImport.update({
   id: '/api/public/v1/events',
   path: '/api/public/v1/events',
@@ -69,20 +114,34 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/payouts': typeof AuthenticatedPayoutsRoute
   '/tickets': typeof AuthenticatedTicketsRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/admin/mpesa': typeof AuthenticatedAdminMpesaRoute
+  '/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/admit/': typeof AuthenticatedAdmitIndexRoute
+  '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
+  '/api/public/mpesa/b2c-timeout': typeof ApiPublicMpesaB2cTimeoutRoute
+  '/api/public/mpesa/stk-callback': typeof ApiPublicMpesaStkCallbackRoute
   '/api/public/v1/events': typeof ApiPublicV1EventsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/payouts': typeof AuthenticatedPayoutsRoute
   '/tickets': typeof AuthenticatedTicketsRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/admin/mpesa': typeof AuthenticatedAdminMpesaRoute
+  '/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/admit': typeof AuthenticatedAdmitIndexRoute
+  '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
+  '/api/public/mpesa/b2c-timeout': typeof ApiPublicMpesaB2cTimeoutRoute
+  '/api/public/mpesa/stk-callback': typeof ApiPublicMpesaStkCallbackRoute
   '/api/public/v1/events': typeof ApiPublicV1EventsRoute
 }
 export interface FileRoutesById {
@@ -91,10 +150,17 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/payouts': typeof AuthenticatedPayoutsRoute
   '/_authenticated/tickets': typeof AuthenticatedTicketsRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/_authenticated/admin/mpesa': typeof AuthenticatedAdminMpesaRoute
+  '/_authenticated/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/_authenticated/admit/': typeof AuthenticatedAdmitIndexRoute
+  '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
+  '/api/public/mpesa/b2c-timeout': typeof ApiPublicMpesaB2cTimeoutRoute
+  '/api/public/mpesa/stk-callback': typeof ApiPublicMpesaStkCallbackRoute
   '/api/public/v1/events': typeof ApiPublicV1EventsRoute
 }
 export interface FileRouteTypes {
@@ -103,20 +169,34 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/payouts'
     | '/tickets'
     | '/events/$eventId'
+    | '/admin/mpesa'
+    | '/admit/$eventId'
     | '/events/new'
     | '/manage/$eventId'
+    | '/admit/'
+    | '/api/public/mpesa/b2c-result'
+    | '/api/public/mpesa/b2c-timeout'
+    | '/api/public/mpesa/stk-callback'
     | '/api/public/v1/events'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/payouts'
     | '/tickets'
     | '/events/$eventId'
+    | '/admin/mpesa'
+    | '/admit/$eventId'
     | '/events/new'
     | '/manage/$eventId'
+    | '/admit'
+    | '/api/public/mpesa/b2c-result'
+    | '/api/public/mpesa/b2c-timeout'
+    | '/api/public/mpesa/stk-callback'
     | '/api/public/v1/events'
   id:
     | '__root__'
@@ -124,10 +204,17 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/dashboard'
+    | '/_authenticated/payouts'
     | '/_authenticated/tickets'
     | '/events/$eventId'
+    | '/_authenticated/admin/mpesa'
+    | '/_authenticated/admit/$eventId'
     | '/_authenticated/events/new'
     | '/_authenticated/manage/$eventId'
+    | '/_authenticated/admit/'
+    | '/api/public/mpesa/b2c-result'
+    | '/api/public/mpesa/b2c-timeout'
+    | '/api/public/mpesa/stk-callback'
     | '/api/public/v1/events'
   fileRoutesById: FileRoutesById
 }
@@ -136,6 +223,9 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   EventsEventIdRoute: typeof EventsEventIdRoute
+  ApiPublicMpesaB2cResultRoute: typeof ApiPublicMpesaB2cResultRoute
+  ApiPublicMpesaB2cTimeoutRoute: typeof ApiPublicMpesaB2cTimeoutRoute
+  ApiPublicMpesaStkCallbackRoute: typeof ApiPublicMpesaStkCallbackRoute
   ApiPublicV1EventsRoute: typeof ApiPublicV1EventsRoute
 }
 
@@ -169,6 +259,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/payouts': {
+      id: '/_authenticated/payouts'
+      path: '/payouts'
+      fullPath: '/payouts'
+      preLoaderRoute: typeof AuthenticatedPayoutsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/tickets': {
       id: '/_authenticated/tickets'
       path: '/tickets'
@@ -182,6 +279,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/events/$eventId'
       preLoaderRoute: typeof EventsEventIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/mpesa': {
+      id: '/_authenticated/admin/mpesa'
+      path: '/admin/mpesa'
+      fullPath: '/admin/mpesa'
+      preLoaderRoute: typeof AuthenticatedAdminMpesaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admit/': {
+      id: '/_authenticated/admit/'
+      path: '/admit'
+      fullPath: '/admit/'
+      preLoaderRoute: typeof AuthenticatedAdmitIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admit/$eventId': {
+      id: '/_authenticated/admit/$eventId'
+      path: '/admit/$eventId'
+      fullPath: '/admit/$eventId'
+      preLoaderRoute: typeof AuthenticatedAdmitEventIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/events/new': {
       id: '/_authenticated/events/new'
@@ -197,6 +315,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManageEventIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/mpesa/b2c-result': {
+      id: '/api/public/mpesa/b2c-result'
+      path: '/api/public/mpesa/b2c-result'
+      fullPath: '/api/public/mpesa/b2c-result'
+      preLoaderRoute: typeof ApiPublicMpesaB2cResultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/mpesa/b2c-timeout': {
+      id: '/api/public/mpesa/b2c-timeout'
+      path: '/api/public/mpesa/b2c-timeout'
+      fullPath: '/api/public/mpesa/b2c-timeout'
+      preLoaderRoute: typeof ApiPublicMpesaB2cTimeoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/mpesa/stk-callback': {
+      id: '/api/public/mpesa/stk-callback'
+      path: '/api/public/mpesa/stk-callback'
+      fullPath: '/api/public/mpesa/stk-callback'
+      preLoaderRoute: typeof ApiPublicMpesaStkCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/v1/events': {
       id: '/api/public/v1/events'
       path: '/api/public/v1/events'
@@ -209,16 +348,24 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedPayoutsRoute: typeof AuthenticatedPayoutsRoute
   AuthenticatedTicketsRoute: typeof AuthenticatedTicketsRoute
+  AuthenticatedAdminMpesaRoute: typeof AuthenticatedAdminMpesaRoute
+  AuthenticatedAdmitEventIdRoute: typeof AuthenticatedAdmitEventIdRoute
   AuthenticatedEventsNewRoute: typeof AuthenticatedEventsNewRoute
   AuthenticatedManageEventIdRoute: typeof AuthenticatedManageEventIdRoute
+  AuthenticatedAdmitIndexRoute: typeof AuthenticatedAdmitIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedPayoutsRoute: AuthenticatedPayoutsRoute,
   AuthenticatedTicketsRoute: AuthenticatedTicketsRoute,
+  AuthenticatedAdminMpesaRoute: AuthenticatedAdminMpesaRoute,
+  AuthenticatedAdmitEventIdRoute: AuthenticatedAdmitEventIdRoute,
   AuthenticatedEventsNewRoute: AuthenticatedEventsNewRoute,
   AuthenticatedManageEventIdRoute: AuthenticatedManageEventIdRoute,
+  AuthenticatedAdmitIndexRoute: AuthenticatedAdmitIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -229,6 +376,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   EventsEventIdRoute: EventsEventIdRoute,
+  ApiPublicMpesaB2cResultRoute: ApiPublicMpesaB2cResultRoute,
+  ApiPublicMpesaB2cTimeoutRoute: ApiPublicMpesaB2cTimeoutRoute,
+  ApiPublicMpesaStkCallbackRoute: ApiPublicMpesaStkCallbackRoute,
   ApiPublicV1EventsRoute: ApiPublicV1EventsRoute,
 }
 export const routeTree = rootRouteImport

@@ -65,7 +65,7 @@ export function CheckoutDialog({
           ticket_type_id: tt.id,
           quantity,
           total_kes: total,
-          buyer_email: user.email,
+          buyer_email: user.email ?? null,
           mpesa_phone: normalizeMpesaPhone(phone),
           mpesa_reference: reference,
           status: "paid",

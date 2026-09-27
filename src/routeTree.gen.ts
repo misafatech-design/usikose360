@@ -21,6 +21,7 @@ import { Route as AuthenticatedAdmitIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdmitEventIdRouteImport } from './routes/_authenticated/admit.$eventId'
 import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
 import { Route as AuthenticatedManageEventIdRouteImport } from './routes/_authenticated/manage.$eventId'
+import { Route as ApiPublicCoversSplatRouteImport } from './routes/api/public/covers.$'
 import { Route as ApiPublicMpesaB2cResultRouteImport } from './routes/api/public/mpesa/b2c-result'
 import { Route as ApiPublicMpesaB2cTimeoutRouteImport } from './routes/api/public/mpesa/b2c-timeout'
 import { Route as ApiPublicMpesaStkCallbackRouteImport } from './routes/api/public/mpesa/stk-callback'
@@ -87,6 +88,11 @@ const AuthenticatedManageEventIdRoute =
     path: '/manage/$eventId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicCoversSplatRoute = ApiPublicCoversSplatRouteImport.update({
+  id: '/api/public/covers/$',
+  path: '/api/public/covers/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicMpesaB2cResultRoute = ApiPublicMpesaB2cResultRouteImport.update({
   id: '/api/public/mpesa/b2c-result',
   path: '/api/public/mpesa/b2c-result',
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
   '/admit/': typeof AuthenticatedAdmitIndexRoute
+  '/api/public/covers/$': typeof ApiPublicCoversSplatRoute
   '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
   '/api/public/mpesa/b2c-timeout': typeof ApiPublicMpesaB2cTimeoutRoute
   '/api/public/mpesa/stk-callback': typeof ApiPublicMpesaStkCallbackRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
   '/admit': typeof AuthenticatedAdmitIndexRoute
+  '/api/public/covers/$': typeof ApiPublicCoversSplatRoute
   '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
   '/api/public/mpesa/b2c-timeout': typeof ApiPublicMpesaB2cTimeoutRoute
   '/api/public/mpesa/stk-callback': typeof ApiPublicMpesaStkCallbackRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/manage/$eventId': typeof AuthenticatedManageEventIdRoute
   '/_authenticated/admit/': typeof AuthenticatedAdmitIndexRoute
+  '/api/public/covers/$': typeof ApiPublicCoversSplatRoute
   '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
   '/api/public/mpesa/b2c-timeout': typeof ApiPublicMpesaB2cTimeoutRoute
   '/api/public/mpesa/stk-callback': typeof ApiPublicMpesaStkCallbackRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/events/new'
     | '/manage/$eventId'
     | '/admit/'
+    | '/api/public/covers/$'
     | '/api/public/mpesa/b2c-result'
     | '/api/public/mpesa/b2c-timeout'
     | '/api/public/mpesa/stk-callback'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/events/new'
     | '/manage/$eventId'
     | '/admit'
+    | '/api/public/covers/$'
     | '/api/public/mpesa/b2c-result'
     | '/api/public/mpesa/b2c-timeout'
     | '/api/public/mpesa/stk-callback'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/_authenticated/events/new'
     | '/_authenticated/manage/$eventId'
     | '/_authenticated/admit/'
+    | '/api/public/covers/$'
     | '/api/public/mpesa/b2c-result'
     | '/api/public/mpesa/b2c-timeout'
     | '/api/public/mpesa/stk-callback'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   EventsEventIdRoute: typeof EventsEventIdRoute
+  ApiPublicCoversSplatRoute: typeof ApiPublicCoversSplatRoute
   ApiPublicMpesaB2cResultRoute: typeof ApiPublicMpesaB2cResultRoute
   ApiPublicMpesaB2cTimeoutRoute: typeof ApiPublicMpesaB2cTimeoutRoute
   ApiPublicMpesaStkCallbackRoute: typeof ApiPublicMpesaStkCallbackRoute
@@ -315,6 +328,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManageEventIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/covers/$': {
+      id: '/api/public/covers/$'
+      path: '/api/public/covers/$'
+      fullPath: '/api/public/covers/$'
+      preLoaderRoute: typeof ApiPublicCoversSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/mpesa/b2c-result': {
       id: '/api/public/mpesa/b2c-result'
       path: '/api/public/mpesa/b2c-result'
@@ -376,6 +396,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   EventsEventIdRoute: EventsEventIdRoute,
+  ApiPublicCoversSplatRoute: ApiPublicCoversSplatRoute,
   ApiPublicMpesaB2cResultRoute: ApiPublicMpesaB2cResultRoute,
   ApiPublicMpesaB2cTimeoutRoute: ApiPublicMpesaB2cTimeoutRoute,
   ApiPublicMpesaStkCallbackRoute: ApiPublicMpesaStkCallbackRoute,

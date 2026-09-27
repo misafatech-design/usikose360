@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { Camera, CameraOff, CheckCircle2, AlertTriangle, XCircle, Search } from "lucide-react";
-import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -132,8 +131,7 @@ function Admit() {
         : "border-destructive/60 bg-destructive/10";
 
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
+    <div className="">
       <div className="mx-auto max-w-lg px-4 py-8">
         <h1 className="truncate text-2xl font-extrabold">{event.data?.title ?? "Admissions"}</h1>
         <p className="mt-1 text-sm text-muted-foreground">

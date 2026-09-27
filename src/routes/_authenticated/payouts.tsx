@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,8 +60,7 @@ function Payouts() {
 
   const d = q.data;
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
+    <div className="">
       <div className="mx-auto max-w-3xl px-4 py-10">
         <h1 className="text-3xl font-extrabold">Withdrawals</h1>
         {!d ? (

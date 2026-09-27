@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarDays, MapPin } from "lucide-react";
 import QRCode from "react-qr-code";
-import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -41,8 +40,7 @@ function MyTickets() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
+    <div className="">
       <div className="mx-auto max-w-4xl px-4 py-10">
         <h1 className="text-3xl font-extrabold">My tickets</h1>
         <p className="mt-1 text-sm text-muted-foreground">

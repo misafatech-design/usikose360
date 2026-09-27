@@ -3,7 +3,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
 import { z } from "zod";
-import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +26,7 @@ const schema = z.object({
   category: z.string(),
   venue: z.string().trim().max(160).optional(),
   city: z.string().trim().min(2).max(80),
-  cover_url: z.string().trim().url().max(500).optional().or(z.literal("")),
+  cover_url: z.string().trim().max(500).optional(),
   starts_at: z.string().min(1),
 });
 
@@ -123,8 +122,7 @@ function CreateEvent() {
 
   if (!isOrganizer) {
     return (
-      <div className="min-h-screen bg-background">
-        <SiteHeader />
+      <div className="">
         <div className="mx-auto max-w-xl px-4 py-20 text-center">
           <h1 className="text-2xl font-bold">Organizer access needed</h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -137,8 +135,7 @@ function CreateEvent() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
+    <div className="">
       <div className="mx-auto max-w-3xl px-4 py-10">
         <h1 className="text-3xl font-extrabold">Create an event</h1>
         <p className="mt-1 text-sm text-muted-foreground">

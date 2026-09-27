@@ -4,7 +4,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Copy, KeyRound, ShieldCheck, Wallet } from "lucide-react";
-import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,8 +37,7 @@ function AdminMpesa() {
   const q = useQuery({ queryKey: ["mpesa-settings"], queryFn: () => fetchFn(), enabled: isAdmin });
 
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
+    <div className="">
       <div className="mx-auto max-w-3xl px-4 py-10">
         <h1 className="text-3xl font-extrabold">M-Pesa Daraja settings</h1>
         <p className="mt-1 text-sm text-muted-foreground">

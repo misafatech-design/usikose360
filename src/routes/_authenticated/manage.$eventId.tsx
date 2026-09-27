@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { CheckCircle2, Coins, Ticket, Users } from "lucide-react";
-import { SiteHeader } from "@/components/site-header";
 import { StaffPanel } from "@/components/staff-panel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -104,8 +103,7 @@ function ManageEvent() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
+    <div className="">
       <div className="mx-auto max-w-5xl px-4 py-10">
         {event.isLoading ? (
           <Skeleton className="h-24 rounded-xl" />

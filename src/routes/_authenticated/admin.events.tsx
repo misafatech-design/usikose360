@@ -44,7 +44,7 @@ function AdminEvents() {
 
   async function toggle(id: string, value: boolean) {
     const { error } = await supabase.from("events").update({ is_featured: value }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(value ? "Added to homepage spotlight" : "Removed from spotlight");
     qc.invalidateQueries({ queryKey: ["admin-events"] });
     qc.invalidateQueries({ queryKey: ["featured-events"] });

@@ -22,8 +22,8 @@ export function CoverUpload({
 
   async function upload(file: File) {
     if (!user) return;
-    if (!file.type.startsWith("image/")) return toast.error("Please choose an image");
-    if (file.size > 5 * 1024 * 1024) return toast.error("Image must be under 5 MB");
+    if (!file.type.startsWith("image/")) { toast.error("Please choose an image"); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error("Image must be under 5 MB"); return; }
     setBusy(true);
     const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
     const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
@@ -31,7 +31,7 @@ export function CoverUpload({
       .from("event-covers")
       .upload(path, file, { contentType: file.type, cacheControl: "31536000" });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     onChange(coverPublicUrl(path));
     toast.success("Photo uploaded");
   }

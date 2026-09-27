@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { CoverUpload } from "@/components/cover-upload";
 
 const CATEGORIES = ["Music", "Nightlife", "Business", "Sports", "Tech", "Food & Drink", "Faith", "General"];
 
@@ -200,13 +201,8 @@ function CreateEvent() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="cover">Cover image URL</Label>
-            <Input
-              id="cover"
-              value={form.cover_url}
-              onChange={(e) => set("cover_url", e.target.value)}
-              placeholder="https://…"
-            />
+            <Label>Thumbnail photo</Label>
+            <CoverUpload value={form.cover_url} onChange={(url) => set("cover_url", url)} />
           </div>
         </div>
 

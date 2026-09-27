@@ -15,7 +15,10 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedPayoutsRouteImport } from './routes/_authenticated/payouts'
 import { Route as AuthenticatedTicketsRouteImport } from './routes/_authenticated/tickets'
+import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminEventsRouteImport } from './routes/_authenticated/admin.events'
 import { Route as AuthenticatedAdminMpesaRouteImport } from './routes/_authenticated/admin.mpesa'
 import { Route as AuthenticatedAdmitIndexRouteImport } from './routes/_authenticated/admit.index'
 import { Route as AuthenticatedAdmitEventIdRouteImport } from './routes/_authenticated/admit.$eventId'
@@ -56,11 +59,27 @@ const AuthenticatedTicketsRoute = AuthenticatedTicketsRouteImport.update({
   path: '/tickets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const EventsIndexRoute = EventsIndexRouteImport.update({
+  id: '/events/',
+  path: '/events/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsEventIdRoute = EventsEventIdRouteImport.update({
   id: '/events/$eventId',
   path: '/events/$eventId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminEventsRoute =
+  AuthenticatedAdminEventsRouteImport.update({
+    id: '/admin/events',
+    path: '/admin/events',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminMpesaRoute = AuthenticatedAdminMpesaRouteImport.update({
   id: '/admin/mpesa',
   path: '/admin/mpesa',
@@ -123,10 +142,13 @@ export interface FileRoutesByFullPath {
   '/payouts': typeof AuthenticatedPayoutsRoute
   '/tickets': typeof AuthenticatedTicketsRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/events/': typeof EventsIndexRoute
+  '/admin/events': typeof AuthenticatedAdminEventsRoute
   '/admin/mpesa': typeof AuthenticatedAdminMpesaRoute
   '/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admit/': typeof AuthenticatedAdmitIndexRoute
   '/api/public/covers/$': typeof ApiPublicCoversSplatRoute
   '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
@@ -141,10 +163,13 @@ export interface FileRoutesByTo {
   '/payouts': typeof AuthenticatedPayoutsRoute
   '/tickets': typeof AuthenticatedTicketsRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/events': typeof EventsIndexRoute
+  '/admin/events': typeof AuthenticatedAdminEventsRoute
   '/admin/mpesa': typeof AuthenticatedAdminMpesaRoute
   '/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/admit': typeof AuthenticatedAdmitIndexRoute
   '/api/public/covers/$': typeof ApiPublicCoversSplatRoute
   '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
@@ -161,10 +186,13 @@ export interface FileRoutesById {
   '/_authenticated/payouts': typeof AuthenticatedPayoutsRoute
   '/_authenticated/tickets': typeof AuthenticatedTicketsRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/events/': typeof EventsIndexRoute
+  '/_authenticated/admin/events': typeof AuthenticatedAdminEventsRoute
   '/_authenticated/admin/mpesa': typeof AuthenticatedAdminMpesaRoute
   '/_authenticated/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admit/': typeof AuthenticatedAdmitIndexRoute
   '/api/public/covers/$': typeof ApiPublicCoversSplatRoute
   '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
@@ -181,10 +209,13 @@ export interface FileRouteTypes {
     | '/payouts'
     | '/tickets'
     | '/events/$eventId'
+    | '/events/'
+    | '/admin/events'
     | '/admin/mpesa'
     | '/admit/$eventId'
     | '/events/new'
     | '/manage/$eventId'
+    | '/admin/'
     | '/admit/'
     | '/api/public/covers/$'
     | '/api/public/mpesa/b2c-result'
@@ -199,10 +230,13 @@ export interface FileRouteTypes {
     | '/payouts'
     | '/tickets'
     | '/events/$eventId'
+    | '/events'
+    | '/admin/events'
     | '/admin/mpesa'
     | '/admit/$eventId'
     | '/events/new'
     | '/manage/$eventId'
+    | '/admin'
     | '/admit'
     | '/api/public/covers/$'
     | '/api/public/mpesa/b2c-result'
@@ -218,10 +252,13 @@ export interface FileRouteTypes {
     | '/_authenticated/payouts'
     | '/_authenticated/tickets'
     | '/events/$eventId'
+    | '/events/'
+    | '/_authenticated/admin/events'
     | '/_authenticated/admin/mpesa'
     | '/_authenticated/admit/$eventId'
     | '/_authenticated/events/new'
     | '/_authenticated/manage/$eventId'
+    | '/_authenticated/admin/'
     | '/_authenticated/admit/'
     | '/api/public/covers/$'
     | '/api/public/mpesa/b2c-result'
@@ -235,6 +272,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   EventsEventIdRoute: typeof EventsEventIdRoute
+  EventsIndexRoute: typeof EventsIndexRoute
   ApiPublicCoversSplatRoute: typeof ApiPublicCoversSplatRoute
   ApiPublicMpesaB2cResultRoute: typeof ApiPublicMpesaB2cResultRoute
   ApiPublicMpesaB2cTimeoutRoute: typeof ApiPublicMpesaB2cTimeoutRoute
@@ -286,12 +324,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTicketsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/events/': {
+      id: '/events/'
+      path: '/events'
+      fullPath: '/events/'
+      preLoaderRoute: typeof EventsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events/$eventId': {
       id: '/events/$eventId'
       path: '/events/$eventId'
       fullPath: '/events/$eventId'
       preLoaderRoute: typeof EventsEventIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/events': {
+      id: '/_authenticated/admin/events'
+      path: '/admin/events'
+      fullPath: '/admin/events'
+      preLoaderRoute: typeof AuthenticatedAdminEventsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/mpesa': {
       id: '/_authenticated/admin/mpesa'
@@ -370,10 +429,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedPayoutsRoute: typeof AuthenticatedPayoutsRoute
   AuthenticatedTicketsRoute: typeof AuthenticatedTicketsRoute
+  AuthenticatedAdminEventsRoute: typeof AuthenticatedAdminEventsRoute
   AuthenticatedAdminMpesaRoute: typeof AuthenticatedAdminMpesaRoute
   AuthenticatedAdmitEventIdRoute: typeof AuthenticatedAdmitEventIdRoute
   AuthenticatedEventsNewRoute: typeof AuthenticatedEventsNewRoute
   AuthenticatedManageEventIdRoute: typeof AuthenticatedManageEventIdRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdmitIndexRoute: typeof AuthenticatedAdmitIndexRoute
 }
 
@@ -381,10 +442,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedPayoutsRoute: AuthenticatedPayoutsRoute,
   AuthenticatedTicketsRoute: AuthenticatedTicketsRoute,
+  AuthenticatedAdminEventsRoute: AuthenticatedAdminEventsRoute,
   AuthenticatedAdminMpesaRoute: AuthenticatedAdminMpesaRoute,
   AuthenticatedAdmitEventIdRoute: AuthenticatedAdmitEventIdRoute,
   AuthenticatedEventsNewRoute: AuthenticatedEventsNewRoute,
   AuthenticatedManageEventIdRoute: AuthenticatedManageEventIdRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdmitIndexRoute: AuthenticatedAdmitIndexRoute,
 }
 
@@ -396,6 +459,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   EventsEventIdRoute: EventsEventIdRoute,
+  EventsIndexRoute: EventsIndexRoute,
   ApiPublicCoversSplatRoute: ApiPublicCoversSplatRoute,
   ApiPublicMpesaB2cResultRoute: ApiPublicMpesaB2cResultRoute,
   ApiPublicMpesaB2cTimeoutRoute: ApiPublicMpesaB2cTimeoutRoute,

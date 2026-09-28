@@ -1,0 +1,2 @@
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS items jsonb, ADD COLUMN IF NOT EXISTS attendees jsonb;
+ALTER TABLE public.tickets ADD COLUMN IF NOT EXISTS attendee_name text, ADD COLUMN IF NOT EXISTS attendee_email text, ADD COLUMN IF NOT EXISTS attendee_phone text;

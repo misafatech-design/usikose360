@@ -174,6 +174,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          attendees: Json | null
           buyer_email: string | null
           buyer_id: string | null
           buyer_name: string | null
@@ -182,6 +183,7 @@ export type Database = {
           environment: string | null
           event_id: string
           id: string
+          items: Json | null
           merchant_request_id: string | null
           mpesa_phone: string | null
           mpesa_receipt: string | null
@@ -196,6 +198,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          attendees?: Json | null
           buyer_email?: string | null
           buyer_id?: string | null
           buyer_name?: string | null
@@ -204,6 +207,7 @@ export type Database = {
           environment?: string | null
           event_id: string
           id?: string
+          items?: Json | null
           merchant_request_id?: string | null
           mpesa_phone?: string | null
           mpesa_receipt?: string | null
@@ -218,6 +222,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          attendees?: Json | null
           buyer_email?: string | null
           buyer_id?: string | null
           buyer_name?: string | null
@@ -226,6 +231,7 @@ export type Database = {
           environment?: string | null
           event_id?: string
           id?: string
+          items?: Json | null
           merchant_request_id?: string | null
           mpesa_phone?: string | null
           mpesa_receipt?: string | null
@@ -377,6 +383,9 @@ export type Database = {
       }
       tickets: {
         Row: {
+          attendee_email: string | null
+          attendee_name: string | null
+          attendee_phone: string | null
           checked_in_at: string | null
           code: string
           created_at: string
@@ -387,6 +396,9 @@ export type Database = {
           ticket_type_id: string
         }
         Insert: {
+          attendee_email?: string | null
+          attendee_name?: string | null
+          attendee_phone?: string | null
           checked_in_at?: string | null
           code?: string
           created_at?: string
@@ -397,6 +409,9 @@ export type Database = {
           ticket_type_id: string
         }
         Update: {
+          attendee_email?: string | null
+          attendee_name?: string | null
+          attendee_phone?: string | null
           checked_in_at?: string | null
           code?: string
           created_at?: string

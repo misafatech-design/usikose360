@@ -27,7 +27,7 @@ export function SiteHeader() {
 
         <nav className="flex shrink-0 items-center gap-1 sm:gap-2">
           <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-            <Link to="/">Browse events</Link>
+            <Link to="/events">Browse events</Link>
           </Button>
           {user ? (
             <>

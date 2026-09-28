@@ -12,11 +12,11 @@ import {
 } from "lucide-react";
 import heroImage from "@/assets/hero-crowd.jpg";
 import { SiteHeader } from "@/components/site-header";
-import { EventCard, type EventCardData } from "@/components/event-card";
+import { EventCard } from "@/components/event-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPublishedEvents } from "@/lib/events-query";
 import { Logo } from "@/components/brand";
 
 const CATEGORIES = [
@@ -57,22 +57,10 @@ function Home() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["published-events"],
-    queryFn: async (): Promise<EventCardData[]> => {
-      const { data, error } = await supabase
-        .from("events")
-        .select("id,title,summary,category,city,venue,cover_url,starts_at,ticket_types(price_kes)")
-        .eq("status", "published")
-        .order("starts_at", { ascending: true });
-      if (error) throw error;
-      return (data ?? []).map((e) => {
-        const prices = (e.ticket_types ?? []).map((t) => Number(t.price_kes));
-        return {
-          ...e,
-          from_price: prices.length ? Math.min(...prices) : null,
-        } as EventCardData;
-      });
-    },
+    queryFn: fetchPublishedEvents,
   });
+
+  const featured = (data ?? []).filter((e) => e.is_featured).slice(0, 3);
 
   const events = (data ?? []).filter((e) => {
     const matchCat = category === "All" || e.category === category;
@@ -87,7 +75,7 @@ function Home() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      <section className="relative isolate overflow-hidden">
+      <section className="dark relative isolate overflow-hidden bg-background">
         <img
           src={heroImage}
           alt="Crowd at a live event in Nairobi"
@@ -96,7 +84,7 @@ function Home() {
           className="absolute inset-0 h-full w-full object-cover opacity-45"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/80 to-background" />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:py-28">
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:py-24">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-primary-glow">
             Social ticketing for Kenya
           </p>
@@ -118,12 +106,26 @@ function Home() {
                 className="h-12 pl-9"
               />
             </div>
-            <Button size="lg" className="h-12 shrink-0 glow-ring">
-              Search
+            <Button size="lg" className="h-12 shrink-0 glow-ring" asChild>
+              <Link to="/events">Browse all</Link>
             </Button>
           </div>
+
+          {featured.length > 0 && (
+            <div className="mt-12">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary-glow">
+                Featured events
+              </p>
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {featured.map((e) => (
+                  <EventCard key={e.id} event={e} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
+      <div className="h-6" />
 
       <section className="mx-auto max-w-7xl px-4 pb-6">
         <div className="-mx-1 flex gap-2 overflow-x-auto pb-2">

@@ -183,16 +183,32 @@ export async function fulfillOrder(orderId: string, receipt: string | null, resu
     .eq("id", orderId)
     .neq("status", "paid");
   if (error) throw error;
-  const rows = Array.from({ length: order.quantity }, () => ({
-    order_id: order.id,
-    event_id: order.event_id,
-    ticket_type_id: order.ticket_type_id,
-    holder_id: order.buyer_id,
-  }));
+  const items: { ticket_type_id: string; quantity: number }[] =
+    Array.isArray(order.items) && order.items.length
+      ? (order.items as any)
+      : [{ ticket_type_id: order.ticket_type_id, quantity: order.quantity }];
+  const attendees: { name?: string; email?: string; phone?: string }[] = Array.isArray(order.attendees)
+    ? (order.attendees as any)
+    : [];
+  const rows: any[] = [];
+  for (const it of items) {
+    for (let i = 0; i < it.quantity; i++) {
+      const a = attendees[rows.length] ?? attendees[0] ?? {};
+      rows.push({
+        order_id: order.id,
+        event_id: order.event_id,
+        ticket_type_id: it.ticket_type_id,
+        holder_id: order.buyer_id,
+        attendee_name: a.name ?? order.buyer_name ?? null,
+        attendee_email: a.email ?? order.buyer_email ?? null,
+        attendee_phone: a.phone ?? order.mpesa_phone ?? null,
+      });
+    }
+  }
   await db.from("tickets").insert(rows);
-  const { data: tt } = await db.from("ticket_types").select("sold").eq("id", order.ticket_type_id).single();
-  if (tt) {
-    await db.from("ticket_types").update({ sold: tt.sold + order.quantity }).eq("id", order.ticket_type_id);
+  for (const it of items) {
+    const { data: tt } = await db.from("ticket_types").select("sold").eq("id", it.ticket_type_id).single();
+    if (tt) await db.from("ticket_types").update({ sold: tt.sold + it.quantity }).eq("id", it.ticket_type_id);
   }
 }
 

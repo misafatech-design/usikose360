@@ -33,7 +33,7 @@ export const Route = createFileRoute("/events/$eventId")({
 
 function EventPage() {
   const { eventId } = Route.useParams();
-  const [selected, setSelected] = useState<CheckoutTicketType | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
@@ -176,16 +176,11 @@ function EventPage() {
                           className="mt-3 w-full"
                           disabled={soldOut}
                           onClick={() => {
-                            setSelected({
-                              id: t.id,
-                              name: t.name,
-                              price_kes: Number(t.price_kes),
-                              event_id: data.id,
-                            });
+                            setSelected(t.id);
                             setOpen(true);
                           }}
                         >
-                          {soldOut ? "Sold out" : "Get ticket"}
+                          {soldOut ? "Sold out" : "Get tickets"}
                         </Button>
                       </div>
                     );
@@ -198,7 +193,17 @@ function EventPage() {
           <CheckoutDialog
             open={open}
             onOpenChange={setOpen}
-            ticketType={selected}
+            initialTicketId={selected}
+            ticketTypes={(data.ticket_types ?? []).map(
+              (t): CheckoutTicketType => ({
+                id: t.id,
+                name: t.name,
+                price_kes: Number(t.price_kes),
+                event_id: data.id,
+                description: t.description,
+                remaining: Math.max(0, t.quantity - t.sold),
+              }),
+            )}
             eventTitle={data.title}
           />
         </>

@@ -142,13 +142,24 @@ export const getPaymentMode = createServerFn({ method: "GET" }).handler(async ()
 
 /* ---------------- Checkout (STK push) ---------------- */
 
+const attendeeSchema = z.object({
+  name: z.string().trim().min(1).max(100),
+  email: z.string().trim().email().max(255),
+  phone: z.string().trim().max(15).optional().default(""),
+});
+
 export const startCheckout = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
     z
       .object({
-        ticketTypeId: z.string().uuid(),
-        quantity: z.number().int().min(1).max(10),
+        eventId: z.string().uuid(),
+        items: z
+          .array(z.object({ ticketTypeId: z.string().uuid(), quantity: z.number().int().min(1).max(20) }))
+          .min(1)
+          .max(10),
+        buyer: attendeeSchema,
+        attendees: z.array(attendeeSchema).max(50).optional().default([]),
         phone: z.string().min(9).max(15),
         orderId: z.string().uuid().optional(),
       })
@@ -159,14 +170,26 @@ export const startCheckout = createServerFn({ method: "POST" })
     if (!/^254(7|1)\d{8}$/.test(phone)) throw new Error("Enter a valid Kenyan phone number");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: tt } = await supabaseAdmin
+    const { data: event } = await supabaseAdmin.from("events").select("id, status").eq("id", data.eventId).single();
+    if (!event || event.status !== "published") throw new Error("Tickets are not on sale");
+    const { data: types } = await supabaseAdmin
       .from("ticket_types")
-      .select("*, events(id, title, status)")
-      .eq("id", data.ticketTypeId)
-      .single();
-    if (!tt || tt.events?.status !== "published") throw new Error("Tickets are not on sale");
-    if (tt.sold + data.quantity > tt.quantity) throw new Error("Not enough tickets left");
-    const total = Number(tt.price_kes) * data.quantity;
+      .select("*")
+      .eq("event_id", data.eventId)
+      .in("id", data.items.map((i) => i.ticketTypeId));
+    let total = 0;
+    let count = 0;
+    for (const it of data.items) {
+      const tt = (types ?? []).find((t) => t.id === it.ticketTypeId);
+      if (!tt) throw new Error("Ticket type not found");
+      if (tt.sold + it.quantity > tt.quantity) throw new Error(`Not enough ${tt.name} tickets left`);
+      total += Number(tt.price_kes) * it.quantity;
+      count += it.quantity;
+    }
+    if (count > 20) throw new Error("You can buy up to 20 tickets per order");
+    const attendees = [data.buyer, ...data.attendees].slice(0, count);
+    const items = data.items.map((i) => ({ ticket_type_id: i.ticketTypeId, quantity: i.quantity }));
+    const tt = { id: data.items[0].ticketTypeId, event_id: data.eventId };
 
     const { data: claims } = await context.supabase.auth.getUser();
     const config = await (await srv()).getActiveConfig();
@@ -192,9 +215,12 @@ export const startCheckout = createServerFn({ method: "POST" })
           buyer_id: context.userId,
           event_id: tt.event_id,
           ticket_type_id: tt.id,
-          quantity: data.quantity,
+          quantity: count,
           total_kes: total,
-          buyer_email: claims.user?.email ?? null,
+          items,
+          attendees,
+          buyer_name: data.buyer.name,
+          buyer_email: data.buyer.email || claims.user?.email || null,
           mpesa_phone: phone,
           mpesa_reference: `USK${Date.now().toString(36).toUpperCase()}`,
           status: "pending",

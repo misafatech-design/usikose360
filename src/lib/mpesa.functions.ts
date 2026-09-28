@@ -189,7 +189,7 @@ export const startCheckout = createServerFn({ method: "POST" })
     if (count > 20) throw new Error("You can buy up to 20 tickets per order");
     const attendees = [data.buyer, ...data.attendees].slice(0, count);
     const items = data.items.map((i) => ({ ticket_type_id: i.ticketTypeId, quantity: i.quantity }));
-    const tt = { id: data.items[0].ticketTypeId, event_id: data.eventId };
+    const tt = { id: data.items[0]!.ticketTypeId, event_id: data.eventId };
 
     const { data: claims } = await context.supabase.auth.getUser();
     const config = await (await srv()).getActiveConfig();

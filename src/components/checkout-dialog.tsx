@@ -131,8 +131,14 @@ export function CheckoutDialog({
       navigate({ to: "/auth" });
       return;
     }
-    if (count === 0) return toast.error("Choose at least one ticket");
-    if (count > 20) return toast.error("Up to 20 tickets per order");
+    if (count === 0) {
+      toast.error("Choose at least one ticket");
+      return;
+    }
+    if (count > 20) {
+      toast.error("Up to 20 tickets per order");
+      return;
+    }
     setStage("form");
   }
 

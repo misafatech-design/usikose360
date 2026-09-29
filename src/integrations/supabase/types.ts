@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      email_log: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          kind: string
+          order_id: string | null
+          recipient: string
+          status: string
+          subject: string | null
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          kind: string
+          order_id?: string | null
+          recipient: string
+          status: string
+          subject?: string | null
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          kind?: string
+          order_id?: string | null
+          recipient?: string
+          status?: string
+          subject?: string | null
+        }
+        Relationships: []
+      }
+      email_settings: {
+        Row: {
+          allow_self_signed: boolean
+          created_at: string
+          enabled: boolean
+          from_email: string | null
+          from_name: string
+          host: string | null
+          id: number
+          password: string | null
+          port: number
+          reply_to: string | null
+          security: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          allow_self_signed?: boolean
+          created_at?: string
+          enabled?: boolean
+          from_email?: string | null
+          from_name?: string
+          host?: string | null
+          id?: number
+          password?: string | null
+          port?: number
+          reply_to?: string | null
+          security?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          allow_self_signed?: boolean
+          created_at?: string
+          enabled?: boolean
+          from_email?: string | null
+          from_name?: string
+          host?: string | null
+          id?: number
+          password?: string | null
+          port?: number
+          reply_to?: string | null
+          security?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
       event_staff: {
         Row: {
           added_by: string | null
@@ -174,12 +255,14 @@ export type Database = {
       }
       orders: {
         Row: {
+          access_token: string
           attendees: Json | null
           buyer_email: string | null
           buyer_id: string | null
           buyer_name: string | null
           checkout_request_id: string | null
           created_at: string
+          emails_sent_at: string | null
           environment: string | null
           event_id: string
           id: string
@@ -192,18 +275,21 @@ export type Database = {
           quantity: number
           result_code: number | null
           result_desc: string | null
+          site_origin: string | null
           status: Database["public"]["Enums"]["order_status"]
           ticket_type_id: string
           total_kes: number
           updated_at: string
         }
         Insert: {
+          access_token?: string
           attendees?: Json | null
           buyer_email?: string | null
           buyer_id?: string | null
           buyer_name?: string | null
           checkout_request_id?: string | null
           created_at?: string
+          emails_sent_at?: string | null
           environment?: string | null
           event_id: string
           id?: string
@@ -216,18 +302,21 @@ export type Database = {
           quantity?: number
           result_code?: number | null
           result_desc?: string | null
+          site_origin?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           ticket_type_id: string
           total_kes?: number
           updated_at?: string
         }
         Update: {
+          access_token?: string
           attendees?: Json | null
           buyer_email?: string | null
           buyer_id?: string | null
           buyer_name?: string | null
           checkout_request_id?: string | null
           created_at?: string
+          emails_sent_at?: string | null
           environment?: string | null
           event_id?: string
           id?: string
@@ -240,6 +329,7 @@ export type Database = {
           quantity?: number
           result_code?: number | null
           result_desc?: string | null
+          site_origin?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           ticket_type_id?: string
           total_kes?: number

@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { CheckCircle2, Loader2, Minus, Plus, RotateCcw, Smartphone, XCircle } from "lucide-react";
+import { CheckCircle2, Download, Loader2, Minus, Plus, RotateCcw, Smartphone, XCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -58,6 +58,7 @@ export function CheckoutDialog({
   const [others, setOthers] = useState<Person[]>([]);
   const [stage, setStage] = useState<Stage>("select");
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [token, setToken] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const startedAt = useRef(0);
@@ -86,7 +87,7 @@ export function CheckoutDialog({
         const elapsed = Date.now() - startedAt.current;
         try {
           // After ~20s, also ask Safaricom directly in case the callback is delayed
-          const res = await status({ data: { orderId, query: elapsed > 20_000 && tick % 3 === 0 } });
+          const res = await status({ data: { orderId, accessToken: token, query: elapsed > 20_000 && tick % 3 === 0 } });
           if (res.status === "paid") {
             setStage("success");
             setMessage(res.mpesa_receipt ? `Receipt ${res.mpesa_receipt}` : "");
@@ -111,7 +112,7 @@ export function CheckoutDialog({
     return () => {
       cancelled = true;
     };
-  }, [stage, orderId, status]);
+  }, [stage, orderId, token, status]);
 
   const lines = ticketTypes
     .map((t) => ({ t, q: qty[t.id] ?? 0 }))
@@ -126,11 +127,6 @@ export function CheckoutDialog({
   }
 
   function toInfo() {
-    if (!user) {
-      onOpenChange(false);
-      navigate({ to: "/auth" });
-      return;
-    }
     if (count === 0) {
       toast.error("Choose at least one ticket");
       return;
@@ -146,11 +142,6 @@ export function CheckoutDialog({
   const live = mode.data?.live && total > 0;
 
   async function pay(retry = false) {
-    if (!user) {
-      onOpenChange(false);
-      navigate({ to: "/auth" });
-      return;
-    }
     if (!buyer.name.trim() || !emailOk(buyer.email)) {
       toast.error("Enter your full name and a valid email");
       return;
@@ -176,9 +167,12 @@ export function CheckoutDialog({
             : [],
           phone: payPhone || "0700000000",
           orderId: retry && orderId ? orderId : undefined,
+          accessToken: retry && token ? token : undefined,
+          origin: window.location.origin,
         },
       });
       setOrderId(res.orderId);
+      setToken(res.accessToken);
       if (res.mode === "instant") {
         setStage("success");
         setMessage("");
@@ -349,15 +343,26 @@ export function CheckoutDialog({
             <CheckCircle2 className="mx-auto h-12 w-12 text-primary-glow" />
             <p className="font-semibold">Payment confirmed — your tickets are ready!</p>
             {message && <p className="text-xs text-muted-foreground">{message}</p>}
-            <Button
-              className="w-full"
-              onClick={() => {
-                onOpenChange(false);
-                navigate({ to: "/tickets" });
-              }}
-            >
-              View my tickets
-            </Button>
+            <p className="text-sm text-muted-foreground">We've emailed your tickets to {buyer.email}.</p>
+            {orderId && token && (
+              <Button asChild className="w-full">
+                <a href={`/api/public/tickets/pdf?order=${orderId}&token=${token}`} target="_blank" rel="noreferrer">
+                  <Download className="h-4 w-4" /> Download PDF tickets
+                </a>
+              </Button>
+            )}
+            {user && (
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  onOpenChange(false);
+                  navigate({ to: "/tickets" });
+                }}
+              >
+                View my tickets
+              </Button>
+            )}
           </div>
         )}
 

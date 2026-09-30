@@ -12,22 +12,27 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedPayoutsRouteImport } from './routes/_authenticated/payouts'
 import { Route as AuthenticatedTicketsRouteImport } from './routes/_authenticated/tickets'
 import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminEmailRouteImport } from './routes/_authenticated/admin.email'
 import { Route as AuthenticatedAdminEventsRouteImport } from './routes/_authenticated/admin.events'
 import { Route as AuthenticatedAdminMpesaRouteImport } from './routes/_authenticated/admin.mpesa'
 import { Route as AuthenticatedAdmitIndexRouteImport } from './routes/_authenticated/admit.index'
 import { Route as AuthenticatedAdmitEventIdRouteImport } from './routes/_authenticated/admit.$eventId'
 import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
 import { Route as AuthenticatedManageEventIdRouteImport } from './routes/_authenticated/manage.$eventId'
+import { Route as ApiPublicQrRouteImport } from './routes/api/public/qr'
 import { Route as ApiPublicCoversSplatRouteImport } from './routes/api/public/covers.$'
 import { Route as ApiPublicMpesaB2cResultRouteImport } from './routes/api/public/mpesa/b2c-result'
 import { Route as ApiPublicMpesaB2cTimeoutRouteImport } from './routes/api/public/mpesa/b2c-timeout'
 import { Route as ApiPublicMpesaStkCallbackRouteImport } from './routes/api/public/mpesa/stk-callback'
+import { Route as ApiPublicTicketsPdfRouteImport } from './routes/api/public/tickets/pdf'
 import { Route as ApiPublicV1EventsRouteImport } from './routes/api/public/v1/events'
 
 const IndexRoute = IndexRouteImport.update({
@@ -42,6 +47,16 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -72,6 +87,11 @@ const EventsEventIdRoute = EventsEventIdRouteImport.update({
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminEmailRoute = AuthenticatedAdminEmailRouteImport.update({
+  id: '/admin/email',
+  path: '/admin/email',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminEventsRoute =
@@ -107,6 +127,11 @@ const AuthenticatedManageEventIdRoute =
     path: '/manage/$eventId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicQrRoute = ApiPublicQrRouteImport.update({
+  id: '/api/public/qr',
+  path: '/api/public/qr',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCoversSplatRoute = ApiPublicCoversSplatRouteImport.update({
   id: '/api/public/covers/$',
   path: '/api/public/covers/$',
@@ -129,6 +154,11 @@ const ApiPublicMpesaStkCallbackRoute =
     path: '/api/public/mpesa/stk-callback',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicTicketsPdfRoute = ApiPublicTicketsPdfRouteImport.update({
+  id: '/api/public/tickets/pdf',
+  path: '/api/public/tickets/pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicV1EventsRoute = ApiPublicV1EventsRouteImport.update({
   id: '/api/public/v1/events',
   path: '/api/public/v1/events',
@@ -138,43 +168,53 @@ const ApiPublicV1EventsRoute = ApiPublicV1EventsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/payouts': typeof AuthenticatedPayoutsRoute
   '/tickets': typeof AuthenticatedTicketsRoute
   '/events/$eventId': typeof EventsEventIdRoute
   '/events/': typeof EventsIndexRoute
+  '/admin/email': typeof AuthenticatedAdminEmailRoute
   '/admin/events': typeof AuthenticatedAdminEventsRoute
   '/admin/mpesa': typeof AuthenticatedAdminMpesaRoute
   '/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/api/public/qr': typeof ApiPublicQrRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admit/': typeof AuthenticatedAdmitIndexRoute
   '/api/public/covers/$': typeof ApiPublicCoversSplatRoute
   '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
   '/api/public/mpesa/b2c-timeout': typeof ApiPublicMpesaB2cTimeoutRoute
   '/api/public/mpesa/stk-callback': typeof ApiPublicMpesaStkCallbackRoute
+  '/api/public/tickets/pdf': typeof ApiPublicTicketsPdfRoute
   '/api/public/v1/events': typeof ApiPublicV1EventsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/payouts': typeof AuthenticatedPayoutsRoute
   '/tickets': typeof AuthenticatedTicketsRoute
   '/events/$eventId': typeof EventsEventIdRoute
   '/events': typeof EventsIndexRoute
+  '/admin/email': typeof AuthenticatedAdminEmailRoute
   '/admin/events': typeof AuthenticatedAdminEventsRoute
   '/admin/mpesa': typeof AuthenticatedAdminMpesaRoute
   '/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/api/public/qr': typeof ApiPublicQrRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admit': typeof AuthenticatedAdmitIndexRoute
   '/api/public/covers/$': typeof ApiPublicCoversSplatRoute
   '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
   '/api/public/mpesa/b2c-timeout': typeof ApiPublicMpesaB2cTimeoutRoute
   '/api/public/mpesa/stk-callback': typeof ApiPublicMpesaStkCallbackRoute
+  '/api/public/tickets/pdf': typeof ApiPublicTicketsPdfRoute
   '/api/public/v1/events': typeof ApiPublicV1EventsRoute
 }
 export interface FileRoutesById {
@@ -182,22 +222,27 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/payouts': typeof AuthenticatedPayoutsRoute
   '/_authenticated/tickets': typeof AuthenticatedTicketsRoute
   '/events/$eventId': typeof EventsEventIdRoute
   '/events/': typeof EventsIndexRoute
+  '/_authenticated/admin/email': typeof AuthenticatedAdminEmailRoute
   '/_authenticated/admin/events': typeof AuthenticatedAdminEventsRoute
   '/_authenticated/admin/mpesa': typeof AuthenticatedAdminMpesaRoute
   '/_authenticated/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/api/public/qr': typeof ApiPublicQrRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admit/': typeof AuthenticatedAdmitIndexRoute
   '/api/public/covers/$': typeof ApiPublicCoversSplatRoute
   '/api/public/mpesa/b2c-result': typeof ApiPublicMpesaB2cResultRoute
   '/api/public/mpesa/b2c-timeout': typeof ApiPublicMpesaB2cTimeoutRoute
   '/api/public/mpesa/stk-callback': typeof ApiPublicMpesaStkCallbackRoute
+  '/api/public/tickets/pdf': typeof ApiPublicTicketsPdfRoute
   '/api/public/v1/events': typeof ApiPublicV1EventsRoute
 }
 export interface FileRouteTypes {
@@ -205,65 +250,80 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/forgot-password'
+    | '/reset-password'
     | '/dashboard'
     | '/payouts'
     | '/tickets'
     | '/events/$eventId'
     | '/events/'
+    | '/admin/email'
     | '/admin/events'
     | '/admin/mpesa'
     | '/admit/$eventId'
     | '/events/new'
     | '/manage/$eventId'
+    | '/api/public/qr'
     | '/admin/'
     | '/admit/'
     | '/api/public/covers/$'
     | '/api/public/mpesa/b2c-result'
     | '/api/public/mpesa/b2c-timeout'
     | '/api/public/mpesa/stk-callback'
+    | '/api/public/tickets/pdf'
     | '/api/public/v1/events'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/forgot-password'
+    | '/reset-password'
     | '/dashboard'
     | '/payouts'
     | '/tickets'
     | '/events/$eventId'
     | '/events'
+    | '/admin/email'
     | '/admin/events'
     | '/admin/mpesa'
     | '/admit/$eventId'
     | '/events/new'
     | '/manage/$eventId'
+    | '/api/public/qr'
     | '/admin'
     | '/admit'
     | '/api/public/covers/$'
     | '/api/public/mpesa/b2c-result'
     | '/api/public/mpesa/b2c-timeout'
     | '/api/public/mpesa/stk-callback'
+    | '/api/public/tickets/pdf'
     | '/api/public/v1/events'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/forgot-password'
+    | '/reset-password'
     | '/_authenticated/dashboard'
     | '/_authenticated/payouts'
     | '/_authenticated/tickets'
     | '/events/$eventId'
     | '/events/'
+    | '/_authenticated/admin/email'
     | '/_authenticated/admin/events'
     | '/_authenticated/admin/mpesa'
     | '/_authenticated/admit/$eventId'
     | '/_authenticated/events/new'
     | '/_authenticated/manage/$eventId'
+    | '/api/public/qr'
     | '/_authenticated/admin/'
     | '/_authenticated/admit/'
     | '/api/public/covers/$'
     | '/api/public/mpesa/b2c-result'
     | '/api/public/mpesa/b2c-timeout'
     | '/api/public/mpesa/stk-callback'
+    | '/api/public/tickets/pdf'
     | '/api/public/v1/events'
   fileRoutesById: FileRoutesById
 }
@@ -271,12 +331,16 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   EventsEventIdRoute: typeof EventsEventIdRoute
   EventsIndexRoute: typeof EventsIndexRoute
+  ApiPublicQrRoute: typeof ApiPublicQrRoute
   ApiPublicCoversSplatRoute: typeof ApiPublicCoversSplatRoute
   ApiPublicMpesaB2cResultRoute: typeof ApiPublicMpesaB2cResultRoute
   ApiPublicMpesaB2cTimeoutRoute: typeof ApiPublicMpesaB2cTimeoutRoute
   ApiPublicMpesaStkCallbackRoute: typeof ApiPublicMpesaStkCallbackRoute
+  ApiPublicTicketsPdfRoute: typeof ApiPublicTicketsPdfRoute
   ApiPublicV1EventsRoute: typeof ApiPublicV1EventsRoute
 }
 
@@ -301,6 +365,20 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -345,6 +423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/email': {
+      id: '/_authenticated/admin/email'
+      path: '/admin/email'
+      fullPath: '/admin/email'
+      preLoaderRoute: typeof AuthenticatedAdminEmailRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/events': {
       id: '/_authenticated/admin/events'
       path: '/admin/events'
@@ -387,6 +472,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManageEventIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/qr': {
+      id: '/api/public/qr'
+      path: '/api/public/qr'
+      fullPath: '/api/public/qr'
+      preLoaderRoute: typeof ApiPublicQrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/covers/$': {
       id: '/api/public/covers/$'
       path: '/api/public/covers/$'
@@ -415,6 +507,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMpesaStkCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/tickets/pdf': {
+      id: '/api/public/tickets/pdf'
+      path: '/api/public/tickets/pdf'
+      fullPath: '/api/public/tickets/pdf'
+      preLoaderRoute: typeof ApiPublicTicketsPdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/v1/events': {
       id: '/api/public/v1/events'
       path: '/api/public/v1/events'
@@ -429,6 +528,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedPayoutsRoute: typeof AuthenticatedPayoutsRoute
   AuthenticatedTicketsRoute: typeof AuthenticatedTicketsRoute
+  AuthenticatedAdminEmailRoute: typeof AuthenticatedAdminEmailRoute
   AuthenticatedAdminEventsRoute: typeof AuthenticatedAdminEventsRoute
   AuthenticatedAdminMpesaRoute: typeof AuthenticatedAdminMpesaRoute
   AuthenticatedAdmitEventIdRoute: typeof AuthenticatedAdmitEventIdRoute
@@ -442,6 +542,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedPayoutsRoute: AuthenticatedPayoutsRoute,
   AuthenticatedTicketsRoute: AuthenticatedTicketsRoute,
+  AuthenticatedAdminEmailRoute: AuthenticatedAdminEmailRoute,
   AuthenticatedAdminEventsRoute: AuthenticatedAdminEventsRoute,
   AuthenticatedAdminMpesaRoute: AuthenticatedAdminMpesaRoute,
   AuthenticatedAdmitEventIdRoute: AuthenticatedAdmitEventIdRoute,
@@ -458,12 +559,16 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   EventsEventIdRoute: EventsEventIdRoute,
   EventsIndexRoute: EventsIndexRoute,
+  ApiPublicQrRoute: ApiPublicQrRoute,
   ApiPublicCoversSplatRoute: ApiPublicCoversSplatRoute,
   ApiPublicMpesaB2cResultRoute: ApiPublicMpesaB2cResultRoute,
   ApiPublicMpesaB2cTimeoutRoute: ApiPublicMpesaB2cTimeoutRoute,
   ApiPublicMpesaStkCallbackRoute: ApiPublicMpesaStkCallbackRoute,
+  ApiPublicTicketsPdfRoute: ApiPublicTicketsPdfRoute,
   ApiPublicV1EventsRoute: ApiPublicV1EventsRoute,
 }
 export const routeTree = rootRouteImport

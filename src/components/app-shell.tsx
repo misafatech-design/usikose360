@@ -11,8 +11,7 @@ import {
   Sparkles,
   Ticket,
   Wallet,
-  type LucideIcon,
-} from "lucide-react";
+  type LucideIcon, Mail } from "lucide-react";
 import { Logo } from "@/components/brand";
 import {
   Sidebar,
@@ -78,6 +77,7 @@ function AppSidebar() {
     { title: "Overview", url: "/admin", icon: ShieldCheck, exact: true },
     { title: "Featured events", url: "/admin/events", icon: Sparkles },
     { title: "M-Pesa settings", url: "/admin/mpesa", icon: Settings },
+    { title: "Email settings", url: "/admin/email", icon: Mail },
   ];
 
   return (

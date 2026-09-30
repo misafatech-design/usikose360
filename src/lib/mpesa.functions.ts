@@ -148,8 +148,35 @@ const attendeeSchema = z.object({
   phone: z.string().trim().max(15).optional().default(""),
 });
 
+/** Optional sign-in: returns the user id if a valid bearer token was sent. */
+async function optionalUserId(): Promise<string | null> {
+  try {
+    const h = getRequest().headers.get("authorization") ?? "";
+    const token = h.startsWith("Bearer ") ? h.slice(7) : "";
+    if (!token) return null;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin.auth.getUser(token);
+    return data.user?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** The site the buyer is on (custom domain aware), checked against the request. */
+function siteOrigin(claimed?: string) {
+  const req = origin();
+  if (!claimed) return req;
+  try {
+    const c = new URL(claimed).origin;
+    const hdr = getRequest().headers.get("origin");
+    if (hdr && new URL(hdr).origin === c) return c;
+  } catch {
+    /* ignore */
+  }
+  return req;
+}
+
 export const startCheckout = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
     z
       .object({
@@ -162,10 +189,14 @@ export const startCheckout = createServerFn({ method: "POST" })
         attendees: z.array(attendeeSchema).max(50).optional().default([]),
         phone: z.string().min(9).max(15),
         orderId: z.string().uuid().optional(),
+        accessToken: z.string().max(100).optional(),
+        origin: z.string().url().max(200).optional(),
       })
       .parse(d),
   )
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
+    const userId = await optionalUserId();
+    const site = siteOrigin(data.origin);
     const phone = normalizePhone(data.phone);
     if (!/^254(7|1)\d{8}$/.test(phone)) throw new Error("Enter a valid Kenyan phone number");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -191,17 +222,28 @@ export const startCheckout = createServerFn({ method: "POST" })
     const items = data.items.map((i) => ({ ticket_type_id: i.ticketTypeId, quantity: i.quantity }));
     const tt = { id: data.items[0]!.ticketTypeId, event_id: data.eventId };
 
-    const { data: claims } = await context.supabase.auth.getUser();
+    // Basic abuse guard: max 6 new orders per phone in 10 minutes
+    if (!data.orderId) {
+      const since = new Date(Date.now() - 10 * 60_000).toISOString();
+      const { count: recent } = await supabaseAdmin
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .eq("mpesa_phone", phone)
+        .gte("created_at", since);
+      if ((recent ?? 0) >= 6) throw new Error("Too many attempts. Please wait a few minutes.");
+    }
     const config = await (await srv()).getActiveConfig();
 
     let orderId = data.orderId;
+    let accessToken = data.accessToken ?? "";
     if (orderId) {
       const { data: existing } = await supabaseAdmin
         .from("orders")
-        .select("id, buyer_id, status")
+        .select("id, buyer_id, status, access_token")
         .eq("id", orderId)
         .single();
-      if (!existing || existing.buyer_id !== context.userId || existing.status === "paid") {
+      const allowed = existing && (existing.access_token === data.accessToken || (userId && existing.buyer_id === userId));
+      if (!existing || !allowed || existing.status === "paid") {
         throw new Error("This order cannot be retried");
       }
       await supabaseAdmin
@@ -212,7 +254,7 @@ export const startCheckout = createServerFn({ method: "POST" })
       const { data: order, error } = await supabaseAdmin
         .from("orders")
         .insert({
-          buyer_id: context.userId,
+          buyer_id: userId,
           event_id: tt.event_id,
           ticket_type_id: tt.id,
           quantity: count,
@@ -220,22 +262,24 @@ export const startCheckout = createServerFn({ method: "POST" })
           items,
           attendees,
           buyer_name: data.buyer.name,
-          buyer_email: data.buyer.email || claims.user?.email || null,
+          buyer_email: data.buyer.email.toLowerCase(),
+          site_origin: site,
           mpesa_phone: phone,
           mpesa_reference: `USK${Date.now().toString(36).toUpperCase()}`,
           status: "pending",
           environment: config?.environment ?? "demo",
         })
-        .select("id")
+        .select("id, access_token")
         .single();
       if (error) throw new Error(error.message);
       orderId = order.id;
+      accessToken = order.access_token;
     }
 
     // Free tickets or no M-Pesa configured → confirm without charging
     if (total <= 0 || !config) {
       await (await srv()).fulfillOrder(orderId!, null, total <= 0 ? "Free ticket" : "Demo — no charge");
-      return { orderId: orderId!, mode: "instant" as const };
+      return { orderId: orderId!, accessToken, mode: "instant" as const };
     }
 
     try {
@@ -250,7 +294,7 @@ export const startCheckout = createServerFn({ method: "POST" })
         .from("orders")
         .update({ checkout_request_id: res.checkoutRequestId ?? null, merchant_request_id: res.merchantRequestId ?? null })
         .eq("id", orderId!);
-      return { orderId: orderId!, mode: "stk" as const };
+      return { orderId: orderId!, accessToken, mode: "stk" as const };
     } catch (e) {
       const msg = e instanceof Error ? e.message : "M-Pesa request failed";
       await (await srv()).failOrder(orderId!, -1, msg);
@@ -259,16 +303,17 @@ export const startCheckout = createServerFn({ method: "POST" })
   });
 
 export const getOrderStatus = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ orderId: z.string().uuid(), query: z.boolean().optional() }).parse(d))
-  .handler(async ({ data, context }) => {
+  .inputValidator((d) =>
+    z.object({ orderId: z.string().uuid(), accessToken: z.string().min(10).max(100), query: z.boolean().optional() }).parse(d),
+  )
+  .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: order } = await supabaseAdmin
       .from("orders")
-      .select("id, buyer_id, status, result_desc, mpesa_receipt, checkout_request_id, updated_at")
+      .select("id, buyer_id, status, result_desc, mpesa_receipt, checkout_request_id, updated_at, access_token")
       .eq("id", data.orderId)
       .single();
-    if (!order || order.buyer_id !== context.userId) throw new Error("Order not found");
+    if (!order || order.access_token !== data.accessToken) throw new Error("Order not found");
 
     // Fallback: ask Safaricom directly if the callback is slow
     if (order.status === "pending" && data.query && order.checkout_request_id) {

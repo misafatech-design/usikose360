@@ -210,6 +210,12 @@ export async function fulfillOrder(orderId: string, receipt: string | null, resu
     const { data: tt } = await db.from("ticket_types").select("sold").eq("id", it.ticket_type_id).single();
     if (tt) await db.from("ticket_types").update({ sold: tt.sold + it.quantity }).eq("id", it.ticket_type_id);
   }
+  try {
+    const { afterOrderPaid } = await import("./email/notify.server");
+    await afterOrderPaid(orderId);
+  } catch (e) {
+    console.error("ticket emails failed", e);
+  }
 }
 
 export async function failOrder(orderId: string, code: number, desc: string) {
@@ -219,4 +225,10 @@ export async function failOrder(orderId: string, code: number, desc: string) {
     .update({ status: "failed", result_code: code, result_desc: desc })
     .eq("id", orderId)
     .eq("status", "pending");
+  try {
+    const { afterOrderFailed } = await import("./email/notify.server");
+    await afterOrderFailed(orderId, desc);
+  } catch (e) {
+    console.error("failure email failed", e);
+  }
 }

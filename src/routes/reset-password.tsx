@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 
-type Search = { token_hash?: string; type?: string; setup?: string };
+type Search = { token_hash?: string | undefined; type?: string | undefined; setup?: string | undefined };
 
 export const Route = createFileRoute("/reset-password")({
   validateSearch: (s: Record<string, unknown>): Search => ({
@@ -54,12 +54,21 @@ function ResetPassword() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (pw.length < 8) return toast.error("Use at least 8 characters");
-    if (pw !== pw2) return toast.error("Passwords don't match");
+    if (pw.length < 8) {
+      toast.error("Use at least 8 characters");
+      return;
+    }
+    if (pw !== pw2) {
+      toast.error("Passwords don't match");
+      return;
+    }
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password: pw, data: { needs_password: false } });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Password saved");
     navigate({ to: "/tickets" });
   }

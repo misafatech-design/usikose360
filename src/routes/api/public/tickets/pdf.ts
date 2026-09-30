@@ -38,7 +38,7 @@ export const Route = createFileRoute("/api/public/tickets/pdf")({
             event: t.events,
           })),
         );
-        return new Response(bytes, {
+        return new Response(new Uint8Array(bytes), {
           headers: {
             "content-type": "application/pdf",
             "content-disposition": `inline; filename="usikose360-tickets.pdf"`,

@@ -1,3 +1,4 @@
+import { resolveCover } from "@/components/cover-upload";
 import { Link } from "@tanstack/react-router";
 import { CalendarDays, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +26,7 @@ export function EventCard({ event }: { event: EventCardData }) {
       <div className="aspect-[16/9] w-full overflow-hidden bg-secondary">
         {event.cover_url ? (
           <img
-            src={event.cover_url}
+            src={resolveCover(event.cover_url)}
             alt={event.title}
             loading="lazy"
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"

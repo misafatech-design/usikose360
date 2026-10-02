@@ -1,3 +1,4 @@
+import { resolveCover } from "@/components/cover-upload";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -86,7 +87,7 @@ function EventPage() {
             <div className="surface-panel overflow-hidden rounded-2xl border border-border/70">
               {data.cover_url ? (
                 <img
-                  src={data.cover_url}
+                  src={resolveCover(data.cover_url)}
                   alt={data.title}
                   className="aspect-[21/9] w-full object-cover"
                 />

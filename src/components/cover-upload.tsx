@@ -5,8 +5,17 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
+const STORAGE_BASE = `${import.meta.env['VITE_SUPABASE_URL']}/storage/v1/object/public/event-covers/`;
+
 export function coverPublicUrl(path: string) {
-  return `/api/public/covers/${path}`;
+  return STORAGE_BASE + path;
+}
+
+/** Works on any host: rewrites old app-relative cover links to direct storage links. */
+export function resolveCover(url: string | null | undefined) {
+  if (!url) return "";
+  if (url.startsWith("/api/public/covers/")) return coverPublicUrl(url.slice("/api/public/covers/".length));
+  return url;
 }
 
 export function CoverUpload({
@@ -51,7 +60,7 @@ export function CoverUpload({
       />
       {value ? (
         <div className="relative overflow-hidden rounded-xl border border-border">
-          <img src={value} alt="Event thumbnail" className="aspect-[16/9] w-full object-cover" />
+          <img src={resolveCover(value)} alt="Event thumbnail" className="aspect-[16/9] w-full object-cover" />
           <div className="absolute right-2 top-2 flex gap-2">
             <Button type="button" size="sm" variant="secondary" onClick={() => input.current?.click()}>
               Replace

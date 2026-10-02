@@ -29,6 +29,10 @@ export function isUsable(s: EmailSettingsRow | null): s is EmailSettingsRow {
   return !!s && s.enabled && !!s.host && !!s.from_email;
 }
 
+function isEdgeRuntime() {
+  return typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers";
+}
+
 /** Build a Nodemailer transport that works with shared-hosting SMTP (cPanel, Plesk, etc.) */
 export function createTransport(s: EmailSettingsRow) {
   const security = s.security === "starttls" || s.security === "none" ? s.security : "ssl";
@@ -39,11 +43,10 @@ export function createTransport(s: EmailSettingsRow) {
     requireTLS: security === "starttls",
     ignoreTLS: security === "none",
     auth: s.username ? { user: s.username, pass: s.password ?? "" } : undefined,
-    tls: {
-      rejectUnauthorized: !s.allow_self_signed,
-      servername: s.host!,
-      minVersion: "TLSv1.2",
-    },
+    // Edge runtimes don't support custom TLS options; only pass them on Node hosts (e.g. Vercel).
+    ...(isEdgeRuntime()
+      ? {}
+      : { tls: { rejectUnauthorized: !s.allow_self_signed, servername: s.host!, minVersion: "TLSv1.2" as const } }),
     connectionTimeout: 15_000,
     greetingTimeout: 10_000,
     socketTimeout: 25_000,

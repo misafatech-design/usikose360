@@ -5,16 +5,13 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
-const STORAGE_BASE = `${import.meta.env['VITE_SUPABASE_URL']}/storage/v1/object/public/event-covers/`;
-
 export function coverPublicUrl(path: string) {
-  return STORAGE_BASE + path;
+  return `/api/public/covers/${path}`;
 }
 
 /** Works on any host: rewrites old app-relative cover links to direct storage links. */
 export function resolveCover(url: string | null | undefined) {
   if (!url) return "";
-  if (url.startsWith("/api/public/covers/")) return coverPublicUrl(url.slice("/api/public/covers/".length));
   return url;
 }
 

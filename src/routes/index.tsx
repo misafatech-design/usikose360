@@ -169,52 +169,6 @@ function Home() {
         )}
       </section>
 
-      <section className="border-y border-border/70 bg-card/40">
-        <div className="mx-auto max-w-7xl px-4 py-16">
-          <h2 className="text-2xl font-bold">Everything organizers need</h2>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                icon: Smartphone,
-                title: "M-Pesa checkout",
-                body: "Buyers pay by phone. Organizers get payouts to their till or paybill.",
-              },
-              {
-                icon: BarChart3,
-                title: "Live analytics",
-                body: "Sales, revenue and attendance metrics update as tickets sell.",
-              },
-              {
-                icon: Bell,
-                title: "Automated emails",
-                body: "Confirmations, reminders and updates go out without lifting a finger.",
-              },
-              {
-                icon: Share2,
-                title: "Social sharing",
-                body: "One-tap sharing to WhatsApp, X, Facebook and more to drive turnout.",
-              },
-              {
-                icon: ShieldCheck,
-                title: "Roles and permissions",
-                body: "Separate access for attendees, organizers and administrators.",
-              },
-              {
-                icon: Plug,
-                title: "Open API",
-                body: "A public events endpoint for calendar sync and third-party tools.",
-              },
-            ].map((f) => (
-              <div key={f.title} className="surface-panel rounded-xl border border-border/70 p-6">
-                <f.icon className="h-6 w-6 text-primary-glow" />
-                <h3 className="mt-4 text-base font-semibold">{f.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{f.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <footer className="mx-auto max-w-7xl px-4 py-10">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <Logo />

@@ -1,0 +1,1 @@
+CREATE POLICY "event covers readable by anyone" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'event-covers');

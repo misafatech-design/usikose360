@@ -8,8 +8,13 @@ export const Route = createFileRoute("/api/public/covers/$")({
         if (!/^[0-9a-f-]{36}\/[0-9a-f-]{36}\.[a-z0-9]{2,5}$/i.test(path)) {
           return new Response("Not found", { status: 404 });
         }
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data, error } = await supabaseAdmin.storage.from("event-covers").download(path);
+        // Public read with the publishable key, so it works on any host without the service key.
+        const url = process.env["SUPABASE_URL"] || import.meta.env["VITE_SUPABASE_URL"];
+        const key = process.env["SUPABASE_PUBLISHABLE_KEY"] || import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+        const res = await fetch(`${url}/storage/v1/object/event-covers/${path}`, { headers: { apikey: key } });
+        if (!res.ok) return new Response("Not found", { status: 404 });
+        const data = await res.blob();
+        const error = null;
         if (error || !data) return new Response("Not found", { status: 404 });
         return new Response(data, {
           headers: {

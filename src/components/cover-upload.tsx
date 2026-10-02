@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
-const STORAGE_BASE = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/event-covers/`;
+const STORAGE_BASE = `${import.meta.env['VITE_SUPABASE_URL']}/storage/v1/object/public/event-covers/`;
 
 export function coverPublicUrl(path: string) {
   return STORAGE_BASE + path;

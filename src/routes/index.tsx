@@ -1,15 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import {
-  BarChart3,
-  Bell,
-  Search,
-  Share2,
-  ShieldCheck,
-  Smartphone,
-  Plug,
-} from "lucide-react";
+import { Search } from "lucide-react";
 import heroImage from "@/assets/hero-crowd.jpg";
 import { SiteHeader } from "@/components/site-header";
 import { EventCard } from "@/components/event-card";

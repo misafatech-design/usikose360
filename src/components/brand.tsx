@@ -1,4 +1,4 @@
-import logo from "@/assets/usikose-logo.png.asset.json";
+import logoUrl from "@/assets/usikose-logo.png";
 import { cn } from "@/lib/utils";
 
 export function Logo({
@@ -11,7 +11,7 @@ export function Logo({
   return (
     <span className={cn("flex items-center gap-2", className)}>
       <img
-        src={logo.url}
+        src={logoUrl}
         alt="Usikose360"
         width={36}
         height={36}

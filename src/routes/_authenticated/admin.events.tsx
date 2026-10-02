@@ -1,3 +1,4 @@
+import { resolveCover } from "@/components/cover-upload";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -72,7 +73,7 @@ function AdminEvents() {
         {list.map((e) => (
           <div key={e.id} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 p-3">
             <div className="h-12 w-20 shrink-0 overflow-hidden rounded-md bg-muted">
-              {e.cover_url && <img src={e.cover_url} alt="" className="h-full w-full object-cover" />}
+              {e.cover_url && <img src={resolveCover(e.cover_url)} alt="" className="h-full w-full object-cover" />}
             </div>
             <div className="min-w-0">
               <Link to="/events/$eventId" params={{ eventId: e.id }} className="block truncate font-medium hover:underline">

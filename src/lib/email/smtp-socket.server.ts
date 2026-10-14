@@ -17,7 +17,7 @@ export type SocketMailOpts = {
   username?: string | null;
   password?: string | null;
   from: { name: string; address: string };
-  replyTo?: string;
+  replyTo?: string | undefined;
   to: string;
   subject: string;
   html: string;
@@ -30,7 +30,7 @@ const dec = new TextDecoder();
 function b64(s: string) {
   const bytes = enc.encode(s);
   let bin = "";
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  for (const b of bytes) bin += String.fromCharCode(b);
   return btoa(bin);
 }
 const wrap = (s: string) => s.replace(/.{1,76}/g, "$&\r\n");

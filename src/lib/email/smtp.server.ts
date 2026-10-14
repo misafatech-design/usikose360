@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { sendViaSocket } from "./smtp-socket.server";
 
 export type EmailSettingsRow = {
   id: number;
@@ -29,7 +30,7 @@ export function isUsable(s: EmailSettingsRow | null): s is EmailSettingsRow {
   return !!s && s.enabled && !!s.host && !!s.from_email;
 }
 
-function isEdgeRuntime() {
+export function isEdgeRuntime() {
   return typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers";
 }
 
@@ -86,6 +87,24 @@ export async function sendMail(a: SendArgs, opts: { settings?: EmailSettingsRow;
     return { sent: false as const, reason: "not_configured" };
   }
   try {
+    if (isEdgeRuntime()) {
+      const security = s!.security === "starttls" || s!.security === "none" ? s!.security : "ssl";
+      await sendViaSocket({
+        host: s!.host!,
+        port: s!.port || (security === "ssl" ? 465 : 587),
+        security,
+        username: s!.username,
+        password: s!.password,
+        from: { name: s!.from_name || "Usikose360", address: s!.from_email! },
+        replyTo: s!.reply_to || undefined,
+        to: a.to,
+        subject: a.subject,
+        html: a.html,
+        text: a.text ?? htmlToText(a.html),
+      });
+      await log(a, "sent");
+      return { sent: true as const };
+    }
     const t = createTransport(s!);
     await t.sendMail({
       from: { name: s!.from_name || "Usikose360", address: s!.from_email! },

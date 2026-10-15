@@ -346,7 +346,7 @@ export function CheckoutDialog({
             <p className="text-sm text-muted-foreground">We've emailed your tickets to {buyer.email}.</p>
             {orderId && token && (
               <Button asChild className="w-full">
-                <a href={`/api/public/tickets/pdf?order=${orderId}&token=${token}`} target="_blank" rel="noreferrer">
+                <a href={`/api/public/tickets/pdf?order=${orderId}&token=${token}&dl=1`} download="usikose360-tickets.pdf">
                   <Download className="h-4 w-4" /> Download PDF tickets
                 </a>
               </Button>

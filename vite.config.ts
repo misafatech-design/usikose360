@@ -8,7 +8,12 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   // On Vercel, build for Vercel's Node runtime (also lets SMTP email connect).
-  ...(process.env["VERCEL"] ? { nitro: { preset: "vercel" } } : {}),
+  // On Render (Web Service), build a Node server: start with `npm start` (node .output/server/index.mjs).
+  ...(process.env["VERCEL"]
+    ? { nitro: { preset: "vercel" } }
+    : process.env["RENDER"] || process.env["NODE_SERVER"]
+      ? { nitro: { preset: "node-server" } }
+      : {}),
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

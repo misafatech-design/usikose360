@@ -6,9 +6,16 @@ import type { MpesaConfigRow } from "./mpesa.server";
 
 const srv = () => import("./mpesa.server");
 
+/** Public origin of the current request (honours proxies like Render/Vercel). */
 function origin() {
   try {
-    return new URL(getRequest().url).origin;
+    const req = getRequest();
+    const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
+    if (host) {
+      const proto = req.headers.get("x-forwarded-proto")?.split(",")[0] ?? new URL(req.url).protocol.replace(":", "");
+      return `${host.includes("localhost") ? proto : proto === "http" ? "https" : proto}://${host.split(",")[0].trim()}`;
+    }
+    return new URL(req.url).origin;
   } catch {
     return "https://usikose360.lovable.app";
   }

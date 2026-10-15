@@ -41,7 +41,7 @@ export const Route = createFileRoute("/api/public/tickets/pdf")({
         return new Response(new Uint8Array(bytes), {
           headers: {
             "content-type": "application/pdf",
-            "content-disposition": `inline; filename="usikose360-tickets.pdf"`,
+            "content-disposition": `${q.get("dl") === "0" ? "inline" : "attachment"}; filename="usikose360-tickets.pdf"`,
             "cache-control": "private, no-store",
           },
         });

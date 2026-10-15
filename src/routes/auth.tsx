@@ -79,16 +79,21 @@ function AuthPage() {
     }
   }
 
-  async function handleGoogle() {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      toast.error("Google sign-in failed. Please try again.");
+  async function handleSocial(provider: SocialProvider) {
+    const redirectTo = window.location.origin;
+    const onLovableHost = /\.lovable\.(app|dev)$|lovableproject\.com$/.test(window.location.hostname);
+    if (provider === "google" && onLovableHost) {
+      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: redirectTo });
+      if (result.error) {
+        toast.error("Google sign-in failed. Please try again.");
+        return;
+      }
+      if (result.redirected) return;
+      navigate({ to: "/" });
       return;
     }
-    if (result.redirected) return;
-    navigate({ to: "/" });
+    const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } });
+    if (error) toast.error(error.message);
   }
 
   return (
@@ -102,9 +107,13 @@ function AuthPage() {
             : "Sign in to your tickets and dashboard."}
         </p>
 
-        <Button variant="secondary" className="mt-6 w-full" onClick={handleGoogle}>
-          Continue with Google
-        </Button>
+        <div className="mt-6 space-y-2">
+          {providers.map((p) => (
+            <Button key={p} variant="secondary" className="w-full" onClick={() => handleSocial(p)}>
+              Continue with {PROVIDER_LABELS[p]}
+            </Button>
+          ))}
+        </div>
 
         <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
           <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />

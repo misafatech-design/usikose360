@@ -12,6 +12,18 @@ import { useAuth } from "@/hooks/useAuth";
 
 type Search = { mode?: "signin" | "signup" };
 
+const PROVIDER_LABELS = {
+  google: "Google",
+  apple: "Apple",
+  facebook: "Facebook",
+  github: "GitHub",
+  azure: "Microsoft",
+  twitter: "X (Twitter)",
+  linkedin_oidc: "LinkedIn",
+  discord: "Discord",
+} as const;
+type SocialProvider = keyof typeof PROVIDER_LABELS;
+
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): Search => ({
     mode: search['mode'] === "signup" ? "signup" : "signin",
@@ -42,10 +54,25 @@ function AuthPage() {
   const [fullName, setFullName] = useState("");
   const [role, setRole] = useState<"attendee" | "organizer">("attendee");
   const [busy, setBusy] = useState(false);
+  const [providers, setProviders] = useState<SocialProvider[]>([]);
 
   useEffect(() => {
     if (user) navigate({ to: "/", replace: true });
   }, [user, navigate]);
+
+  // Detect whichever social logins are enabled on the connected auth backend.
+  useEffect(() => {
+    const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+    const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
+    if (!url || !key) return;
+    fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((s) => {
+        const ext = (s?.external ?? {}) as Record<string, boolean>;
+        setProviders((Object.keys(PROVIDER_LABELS) as SocialProvider[]).filter((p) => ext[p]));
+      })
+      .catch(() => setProviders(["google"]));
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

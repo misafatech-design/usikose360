@@ -13,7 +13,7 @@ function origin() {
     const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
     if (host) {
       const proto = req.headers.get("x-forwarded-proto")?.split(",")[0] ?? new URL(req.url).protocol.replace(":", "");
-      return `${host.includes("localhost") ? proto : proto === "http" ? "https" : proto}://${host.split(",")[0].trim()}`;
+      return `${host.includes("localhost") ? proto : proto === "http" ? "https" : proto}://${(host.split(",")[0] ?? host).trim()}`;
     }
     return new URL(req.url).origin;
   } catch {

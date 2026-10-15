@@ -14,7 +14,7 @@ function requestOrigin(claimed?: string) {
   const fwdHost = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
   const fwdProto = req.headers.get("x-forwarded-proto")?.split(",")[0];
   const own = fwdHost
-    ? `${fwdProto ?? (fwdHost.includes("localhost") ? "http" : "https")}://${fwdHost.split(",")[0].trim()}`
+    ? `${fwdProto ?? (fwdHost.includes("localhost") ? "http" : "https")}://${(fwdHost.split(",")[0] ?? fwdHost).trim()}`
     : new URL(req.url).origin;
   const hdr = req.headers.get("origin");
   if (claimed) {

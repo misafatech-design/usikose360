@@ -62,8 +62,8 @@ function AuthPage() {
 
   // Detect whichever social logins are enabled on the connected auth backend.
   useEffect(() => {
-    const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-    const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
+    const url = import.meta.env["VITE_SUPABASE_URL"] as string | undefined;
+    const key = import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string | undefined;
     if (!url || !key) return;
     fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } })
       .then((r) => (r.ok ? r.json() : null))

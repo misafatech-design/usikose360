@@ -12,6 +12,18 @@ import { useAuth } from "@/hooks/useAuth";
 
 type Search = { mode?: "signin" | "signup" };
 
+const PROVIDER_LABELS = {
+  google: "Google",
+  apple: "Apple",
+  facebook: "Facebook",
+  github: "GitHub",
+  azure: "Microsoft",
+  twitter: "X (Twitter)",
+  linkedin_oidc: "LinkedIn",
+  discord: "Discord",
+} as const;
+type SocialProvider = keyof typeof PROVIDER_LABELS;
+
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): Search => ({
     mode: search['mode'] === "signup" ? "signup" : "signin",
@@ -42,10 +54,25 @@ function AuthPage() {
   const [fullName, setFullName] = useState("");
   const [role, setRole] = useState<"attendee" | "organizer">("attendee");
   const [busy, setBusy] = useState(false);
+  const [providers, setProviders] = useState<SocialProvider[]>([]);
 
   useEffect(() => {
     if (user) navigate({ to: "/", replace: true });
   }, [user, navigate]);
+
+  // Detect whichever social logins are enabled on the connected auth backend.
+  useEffect(() => {
+    const url = import.meta.env["VITE_SUPABASE_URL"] as string | undefined;
+    const key = import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string | undefined;
+    if (!url || !key) return;
+    fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((s) => {
+        const ext = (s?.external ?? {}) as Record<string, boolean>;
+        setProviders((Object.keys(PROVIDER_LABELS) as SocialProvider[]).filter((p) => ext[p]));
+      })
+      .catch(() => setProviders(["google"]));
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -79,16 +106,21 @@ function AuthPage() {
     }
   }
 
-  async function handleGoogle() {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      toast.error("Google sign-in failed. Please try again.");
+  async function handleSocial(provider: SocialProvider) {
+    const redirectTo = window.location.origin;
+    const onLovableHost = /\.lovable\.(app|dev)$|lovableproject\.com$/.test(window.location.hostname);
+    if (provider === "google" && onLovableHost) {
+      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: redirectTo });
+      if (result.error) {
+        toast.error("Google sign-in failed. Please try again.");
+        return;
+      }
+      if (result.redirected) return;
+      navigate({ to: "/" });
       return;
     }
-    if (result.redirected) return;
-    navigate({ to: "/" });
+    const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } });
+    if (error) toast.error(error.message);
   }
 
   return (
@@ -102,11 +134,15 @@ function AuthPage() {
             : "Sign in to your tickets and dashboard."}
         </p>
 
-        <Button variant="secondary" className="mt-6 w-full" onClick={handleGoogle}>
-          Continue with Google
-        </Button>
+        <div className="mt-6 space-y-2">
+          {providers.map((p) => (
+            <Button key={p} variant="secondary" className="w-full" onClick={() => handleSocial(p)}>
+              Continue with {PROVIDER_LABELS[p]}
+            </Button>
+          ))}
+        </div>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
+        <div className={providers.length ? "my-5 flex items-center gap-3 text-xs text-muted-foreground" : "hidden"}>
           <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
         </div>
 

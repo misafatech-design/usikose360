@@ -86,6 +86,13 @@ function MyTickets() {
                 <p className="mt-1 text-[11px] text-muted-foreground">
                   {t.checked_in_at ? "Checked in" : "Valid"}
                 </p>
+                <a
+                  href={`/api/public/tickets/pdf?codes=${t.code}&dl=1`}
+                  download={`ticket-${t.code}.pdf`}
+                  className="mt-2 inline-block text-xs font-medium text-primary hover:underline"
+                >
+                  Download PDF
+                </a>
               </div>
             </div>
           ))}

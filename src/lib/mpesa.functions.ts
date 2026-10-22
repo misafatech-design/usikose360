@@ -42,17 +42,20 @@ export const getMpesaSettings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId);
-    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
-    const { data } = await supabaseAdmin.from("mpesa_config").select("*");
+    const { supabaseAdmin, explainDbError } = await import("@/lib/supabase-admin.server");
+    const { callbackBase } = await srv();
+    const { data, error } = await supabaseAdmin.from("mpesa_config").select("*");
+    if (error) throw new Error(explainDbError(error.message));
     const rows = (data ?? []) as MpesaConfigRow[];
     const o = origin();
     return (["sandbox", "production"] as const).map((env) => {
       const r = rows.find((x) => x.environment === env);
-      const base = (r?.callback_base_url || o).replace(/\/$/, "");
+      const base = callbackBase({ callback_base_url: r?.callback_base_url ?? null }, o);
       return {
         environment: env,
         exists: !!r,
         is_active: r?.is_active ?? false,
+        current_origin: o,
         shortcode: r?.shortcode ?? "",
         party_b: r?.party_b ?? "",
         transaction_type: r?.transaction_type ?? "CustomerPayBillOnline",
@@ -206,15 +209,28 @@ export const startCheckout = createServerFn({ method: "POST" })
     const site = siteOrigin(data.origin);
     const phone = normalizePhone(data.phone);
     if (!/^254(7|1)\d{8}$/.test(phone)) throw new Error("Enter a valid Kenyan phone number");
-    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
+    const { supabaseAdmin, explainDbError, sameProject } = await import("@/lib/supabase-admin.server");
 
-    const { data: event } = await supabaseAdmin.from("events").select("id, status").eq("id", data.eventId).single();
-    if (!event || event.status !== "published") throw new Error("Tickets are not on sale");
-    const { data: types } = await supabaseAdmin
+    const { data: event, error: eventError } = await supabaseAdmin
+      .from("events")
+      .select("id, status")
+      .eq("id", data.eventId)
+      .maybeSingle();
+    if (eventError) throw new Error(explainDbError(eventError.message));
+    if (!event) {
+      throw new Error(
+        sameProject()
+          ? "This event no longer exists."
+          : "Server setup mismatch: SUPABASE_URL and VITE_SUPABASE_URL point to different Supabase projects. Use the same project for both and redeploy.",
+      );
+    }
+    if (event.status !== "published") throw new Error("Tickets for this event are not on sale right now.");
+    const { data: types, error: typesError } = await supabaseAdmin
       .from("ticket_types")
       .select("*")
       .eq("event_id", data.eventId)
       .in("id", data.items.map((i) => i.ticketTypeId));
+    if (typesError) throw new Error(explainDbError(typesError.message));
     let total = 0;
     let count = 0;
     for (const it of data.items) {

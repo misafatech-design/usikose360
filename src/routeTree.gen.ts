@@ -27,6 +27,7 @@ import { Route as AuthenticatedAdmitIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdmitEventIdRouteImport } from './routes/_authenticated/admit.$eventId'
 import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
 import { Route as AuthenticatedManageEventIdRouteImport } from './routes/_authenticated/manage.$eventId'
+import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiPublicQrRouteImport } from './routes/api/public/qr'
 import { Route as ApiPublicCoversSplatRouteImport } from './routes/api/public/covers.$'
 import { Route as ApiPublicMpesaB2cResultRouteImport } from './routes/api/public/mpesa/b2c-result'
@@ -127,6 +128,11 @@ const AuthenticatedManageEventIdRoute =
     path: '/manage/$eventId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
+  id: '/api/public/health',
+  path: '/api/public/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicQrRoute = ApiPublicQrRouteImport.update({
   id: '/api/public/qr',
   path: '/api/public/qr',
@@ -181,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/qr': typeof ApiPublicQrRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admit/': typeof AuthenticatedAdmitIndexRoute
@@ -207,6 +214,7 @@ export interface FileRoutesByTo {
   '/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/qr': typeof ApiPublicQrRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admit': typeof AuthenticatedAdmitIndexRoute
@@ -235,6 +243,7 @@ export interface FileRoutesById {
   '/_authenticated/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/qr': typeof ApiPublicQrRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admit/': typeof AuthenticatedAdmitIndexRoute
@@ -263,6 +272,7 @@ export interface FileRouteTypes {
     | '/admit/$eventId'
     | '/events/new'
     | '/manage/$eventId'
+    | '/api/public/health'
     | '/api/public/qr'
     | '/admin/'
     | '/admit/'
@@ -289,6 +299,7 @@ export interface FileRouteTypes {
     | '/admit/$eventId'
     | '/events/new'
     | '/manage/$eventId'
+    | '/api/public/health'
     | '/api/public/qr'
     | '/admin'
     | '/admit'
@@ -316,6 +327,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admit/$eventId'
     | '/_authenticated/events/new'
     | '/_authenticated/manage/$eventId'
+    | '/api/public/health'
     | '/api/public/qr'
     | '/_authenticated/admin/'
     | '/_authenticated/admit/'
@@ -335,6 +347,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   EventsEventIdRoute: typeof EventsEventIdRoute
   EventsIndexRoute: typeof EventsIndexRoute
+  ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicQrRoute: typeof ApiPublicQrRoute
   ApiPublicCoversSplatRoute: typeof ApiPublicCoversSplatRoute
   ApiPublicMpesaB2cResultRoute: typeof ApiPublicMpesaB2cResultRoute
@@ -472,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManageEventIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/health': {
+      id: '/api/public/health'
+      path: '/api/public/health'
+      fullPath: '/api/public/health'
+      preLoaderRoute: typeof ApiPublicHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/qr': {
       id: '/api/public/qr'
       path: '/api/public/qr'
@@ -563,6 +583,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   EventsEventIdRoute: EventsEventIdRoute,
   EventsIndexRoute: EventsIndexRoute,
+  ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicQrRoute: ApiPublicQrRoute,
   ApiPublicCoversSplatRoute: ApiPublicCoversSplatRoute,
   ApiPublicMpesaB2cResultRoute: ApiPublicMpesaB2cResultRoute,

@@ -9,8 +9,9 @@ export const Route = createFileRoute("/api/public/covers/$")({
           return new Response("Not found", { status: 404 });
         }
         // Public read with the publishable key, so it works on any host without the service key.
-        const url = process.env["SUPABASE_URL"] || import.meta.env["VITE_SUPABASE_URL"];
-        const key = process.env["SUPABASE_PUBLISHABLE_KEY"] || import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+        const { serverDbUrl, publishableKey } = await import("@/lib/supabase-admin.server");
+        const url = serverDbUrl();
+        const key = publishableKey() ?? "";
         const res = await fetch(`${url}/storage/v1/object/event-covers/${path}`, { headers: { apikey: key } });
         if (!res.ok) return new Response("Not found", { status: 404 });
         const data = await res.blob();

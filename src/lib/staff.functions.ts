@@ -13,7 +13,7 @@ export const addEventStaff = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ eventId: z.string().uuid(), email: z.string().trim().email().max(255) }).parse(d))
   .handler(async ({ data, context }) => {
     await assertOwner(context.supabase, data.eventId, context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
     const email = data.email.toLowerCase();
     let found: { id: string } | undefined;
     for (let page = 1; page <= 20 && !found; page++) {

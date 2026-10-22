@@ -47,6 +47,11 @@ function AdminMpesa() {
           <div className="surface-panel mt-8 rounded-xl border border-border/70 p-8 text-center text-sm text-muted-foreground">
             Only system administrators can open this page.
           </div>
+        ) : q.error ? (
+          <div className="mt-8 rounded-xl border border-destructive/40 bg-destructive/5 p-5 text-sm">
+            <p className="font-semibold text-destructive">Could not load the M-Pesa settings</p>
+            <p className="mt-1 text-muted-foreground">{(q.error as Error).message}</p>
+          </div>
         ) : q.isLoading || !q.data ? (
           <Skeleton className="mt-8 h-96 rounded-xl" />
         ) : (
@@ -195,12 +200,18 @@ function EnvForm({ s, onSaved }: { s: Settings; onSaved: () => void }) {
         </div>
         <Field
           id={`cb-${env}`}
-          label="Public site address for M-Pesa callbacks"
+          label="Callback address override (optional)"
           value={f.callback_base_url}
           onChange={set("callback_base_url")}
-          placeholder="https://usikose360.lovable.app"
-          hint="Leave empty to use this site's address. Must be public https."
+          placeholder={s.current_origin}
+          hint="Leave empty (recommended): M-Pesa is told to reply to whatever site the buyer is using, so it keeps working when you move to Vercel, Render or a new domain."
         />
+        {f.callback_base_url && !f.callback_base_url.startsWith(s.current_origin) && (
+          <p className="rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-xs">
+            This override is different from the site you are on ({s.current_origin}). If you moved the app, clear it so
+            payment confirmations reach the new site.
+          </p>
+        )}
         <p className="text-xs text-muted-foreground">Saved secrets show only their last 4 characters. Leave blank to keep them.</p>
       </section>
 

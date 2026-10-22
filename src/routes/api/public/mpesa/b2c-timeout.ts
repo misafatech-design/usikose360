@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/public/mpesa/b2c-timeout")({
         const body = (await request.json().catch(() => null)) as any;
         const id = body?.Result?.OriginatorConversationID ?? body?.OriginatorConversationID;
         if (id) {
-          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
           await supabaseAdmin
             .from("payouts")
             .update({ status: "failed", result_desc: "Timed out at M-Pesa" })

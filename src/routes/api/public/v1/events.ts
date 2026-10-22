@@ -15,20 +15,8 @@ export const Route = createFileRoute("/api/public/v1/events")({
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
       GET: async ({ request }) => {
-        const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-        const supabase = createClient<Database>(process.env["SUPABASE_URL"]!, key, {
-          auth: { persistSession: false, autoRefreshToken: false },
-          global: {
-            fetch: (input, init) => {
-              const h = new Headers(init?.headers);
-              if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) {
-                h.delete("Authorization");
-              }
-              h.set("apikey", key);
-              return fetch(input, { ...init, headers: h });
-            },
-          },
-        });
+        const { publicServerClient } = await import("@/lib/supabase-admin.server");
+        const supabase = publicServerClient();
 
         const url = new URL(request.url);
         const city = url.searchParams.get("city");

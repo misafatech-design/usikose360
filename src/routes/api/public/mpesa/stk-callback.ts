@@ -15,7 +15,7 @@ export const Route = createFileRoute("/api/public/mpesa/stk-callback")({
         const cb = body?.Body?.stkCallback;
         if (!cb?.CheckoutRequestID) return ok();
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
         const { data: order } = await supabaseAdmin
           .from("orders")
           .select("id, total_kes")

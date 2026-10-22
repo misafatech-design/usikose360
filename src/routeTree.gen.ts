@@ -13,10 +13,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedPayoutsRouteImport } from './routes/_authenticated/payouts'
 import { Route as AuthenticatedTicketsRouteImport } from './routes/_authenticated/tickets'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -27,6 +31,7 @@ import { Route as AuthenticatedAdmitIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdmitEventIdRouteImport } from './routes/_authenticated/admit.$eventId'
 import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
 import { Route as AuthenticatedManageEventIdRouteImport } from './routes/_authenticated/manage.$eventId'
+import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiPublicQrRouteImport } from './routes/api/public/qr'
 import { Route as ApiPublicCoversSplatRouteImport } from './routes/api/public/covers.$'
 import { Route as ApiPublicMpesaB2cResultRouteImport } from './routes/api/public/mpesa/b2c-result'
@@ -54,9 +59,19 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -73,6 +88,16 @@ const AuthenticatedTicketsRoute = AuthenticatedTicketsRouteImport.update({
   id: '/tickets',
   path: '/tickets',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EventsIndexRoute = EventsIndexRouteImport.update({
   id: '/events/',
@@ -127,6 +152,11 @@ const AuthenticatedManageEventIdRoute =
     path: '/manage/$eventId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
+  id: '/api/public/health',
+  path: '/api/public/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicQrRoute = ApiPublicQrRouteImport.update({
   id: '/api/public/qr',
   path: '/api/public/qr',
@@ -169,11 +199,15 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/payouts': typeof AuthenticatedPayoutsRoute
   '/tickets': typeof AuthenticatedTicketsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/blog/': typeof BlogIndexRoute
   '/events/': typeof EventsIndexRoute
   '/admin/email': typeof AuthenticatedAdminEmailRoute
   '/admin/events': typeof AuthenticatedAdminEventsRoute
@@ -181,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/qr': typeof ApiPublicQrRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admit/': typeof AuthenticatedAdmitIndexRoute
@@ -195,11 +230,15 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/payouts': typeof AuthenticatedPayoutsRoute
   '/tickets': typeof AuthenticatedTicketsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/blog': typeof BlogIndexRoute
   '/events': typeof EventsIndexRoute
   '/admin/email': typeof AuthenticatedAdminEmailRoute
   '/admin/events': typeof AuthenticatedAdminEventsRoute
@@ -207,6 +246,7 @@ export interface FileRoutesByTo {
   '/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/qr': typeof ApiPublicQrRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admit': typeof AuthenticatedAdmitIndexRoute
@@ -223,11 +263,15 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/payouts': typeof AuthenticatedPayoutsRoute
   '/_authenticated/tickets': typeof AuthenticatedTicketsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/blog/': typeof BlogIndexRoute
   '/events/': typeof EventsIndexRoute
   '/_authenticated/admin/email': typeof AuthenticatedAdminEmailRoute
   '/_authenticated/admin/events': typeof AuthenticatedAdminEventsRoute
@@ -235,6 +279,7 @@ export interface FileRoutesById {
   '/_authenticated/admit/$eventId': typeof AuthenticatedAdmitEventIdRoute
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/manage/$eventId': typeof AuthenticatedManageEventIdRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/qr': typeof ApiPublicQrRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admit/': typeof AuthenticatedAdmitIndexRoute
@@ -251,11 +296,15 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/forgot-password'
+    | '/privacy'
     | '/reset-password'
+    | '/terms'
     | '/dashboard'
     | '/payouts'
     | '/tickets'
+    | '/blog/$slug'
     | '/events/$eventId'
+    | '/blog/'
     | '/events/'
     | '/admin/email'
     | '/admin/events'
@@ -263,6 +312,7 @@ export interface FileRouteTypes {
     | '/admit/$eventId'
     | '/events/new'
     | '/manage/$eventId'
+    | '/api/public/health'
     | '/api/public/qr'
     | '/admin/'
     | '/admit/'
@@ -277,11 +327,15 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/forgot-password'
+    | '/privacy'
     | '/reset-password'
+    | '/terms'
     | '/dashboard'
     | '/payouts'
     | '/tickets'
+    | '/blog/$slug'
     | '/events/$eventId'
+    | '/blog'
     | '/events'
     | '/admin/email'
     | '/admin/events'
@@ -289,6 +343,7 @@ export interface FileRouteTypes {
     | '/admit/$eventId'
     | '/events/new'
     | '/manage/$eventId'
+    | '/api/public/health'
     | '/api/public/qr'
     | '/admin'
     | '/admit'
@@ -304,11 +359,15 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/forgot-password'
+    | '/privacy'
     | '/reset-password'
+    | '/terms'
     | '/_authenticated/dashboard'
     | '/_authenticated/payouts'
     | '/_authenticated/tickets'
+    | '/blog/$slug'
     | '/events/$eventId'
+    | '/blog/'
     | '/events/'
     | '/_authenticated/admin/email'
     | '/_authenticated/admin/events'
@@ -316,6 +375,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admit/$eventId'
     | '/_authenticated/events/new'
     | '/_authenticated/manage/$eventId'
+    | '/api/public/health'
     | '/api/public/qr'
     | '/_authenticated/admin/'
     | '/_authenticated/admit/'
@@ -332,9 +392,14 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  TermsRoute: typeof TermsRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   EventsEventIdRoute: typeof EventsEventIdRoute
+  BlogIndexRoute: typeof BlogIndexRoute
   EventsIndexRoute: typeof EventsIndexRoute
+  ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicQrRoute: typeof ApiPublicQrRoute
   ApiPublicCoversSplatRoute: typeof ApiPublicCoversSplatRoute
   ApiPublicMpesaB2cResultRoute: typeof ApiPublicMpesaB2cResultRoute
@@ -374,11 +439,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -401,6 +480,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/tickets'
       preLoaderRoute: typeof AuthenticatedTicketsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/events/': {
       id: '/events/'
@@ -471,6 +564,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/manage/$eventId'
       preLoaderRoute: typeof AuthenticatedManageEventIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/health': {
+      id: '/api/public/health'
+      path: '/api/public/health'
+      fullPath: '/api/public/health'
+      preLoaderRoute: typeof ApiPublicHealthRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/qr': {
       id: '/api/public/qr'
@@ -560,9 +660,14 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  TermsRoute: TermsRoute,
+  BlogSlugRoute: BlogSlugRoute,
   EventsEventIdRoute: EventsEventIdRoute,
+  BlogIndexRoute: BlogIndexRoute,
   EventsIndexRoute: EventsIndexRoute,
+  ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicQrRoute: ApiPublicQrRoute,
   ApiPublicCoversSplatRoute: ApiPublicCoversSplatRoute,
   ApiPublicMpesaB2cResultRoute: ApiPublicMpesaB2cResultRoute,

@@ -11,7 +11,7 @@ import {
 const FALLBACK_ORIGIN = "https://usikose360.lovable.app";
 
 async function admin() {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
   return supabaseAdmin;
 }
 

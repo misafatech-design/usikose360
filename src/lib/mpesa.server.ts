@@ -27,13 +27,21 @@ export function baseUrl(env: MpesaEnv) {
 }
 
 async function admin() {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
   return supabaseAdmin;
 }
 
+/**
+ * The active M-Pesa settings saved by the admin (in whichever database this deploy uses).
+ * Throws on database errors so a broken connection never turns into free "demo" tickets.
+ */
 export async function getActiveConfig(): Promise<MpesaConfigRow | null> {
   const db = await admin();
-  const { data } = await db.from("mpesa_config").select("*").eq("is_active", true).maybeSingle();
+  const { data, error } = await db.from("mpesa_config").select("*").eq("is_active", true).maybeSingle();
+  if (error) {
+    const { explainDbError } = await import("@/lib/supabase-admin.server");
+    throw new Error(explainDbError(error.message));
+  }
   const c = data as MpesaConfigRow | null;
   if (!c || !c.shortcode || !c.passkey || !c.consumer_key || !c.consumer_secret) return null;
   return c;
@@ -67,9 +75,18 @@ function stkPassword(c: MpesaConfigRow, ts: string) {
   return btoa(`${c.shortcode}${c.passkey}${ts}`);
 }
 
+/**
+ * Callback address M-Pesa should call. Uses the site the request came from (so it follows
+ * the app to any new domain/host automatically); an admin override is used only when set.
+ */
+export function callbackBase(c: Pick<MpesaConfigRow, "callback_base_url">, currentOrigin: string) {
+  const override = (c.callback_base_url ?? "").trim();
+  const base = /^https:\/\//i.test(override) ? override : currentOrigin;
+  return base.replace(/\/+$/, "");
+}
+
 export function callbackUrl(c: MpesaConfigRow, path: string, fallbackOrigin: string) {
-  const base = (c.callback_base_url || fallbackOrigin).replace(/\/$/, "");
-  return `${base}/api/public/mpesa/${path}?token=${c.callback_token}`;
+  return `${callbackBase(c, fallbackOrigin)}/api/public/mpesa/${path}?token=${c.callback_token}`;
 }
 
 export async function stkPush(

@@ -12,7 +12,7 @@ export const Route = createFileRoute("/api/public/tickets/pdf")({
           .map((c) => c.trim().toUpperCase())
           .filter((c) => /^[A-Z0-9]{6,20}$/.test(c))
           .slice(0, 20);
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
 
         let query = supabaseAdmin
           .from("tickets")

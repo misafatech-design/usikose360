@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/public/mpesa/b2c-result")({
         const body = (await request.json().catch(() => null)) as any;
         const r = body?.Result;
         if (!r?.OriginatorConversationID) return Response.json({ ResultCode: 0 });
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
         const code = Number(r.ResultCode);
         await supabaseAdmin
           .from("payouts")

@@ -42,7 +42,7 @@ export const getMpesaSettings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
     const { data } = await supabaseAdmin.from("mpesa_config").select("*");
     const rows = (data ?? []) as MpesaConfigRow[];
     const o = origin();
@@ -100,7 +100,7 @@ export const saveMpesaSettings = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
 
     const patch: Record<string, unknown> = {
       environment: data.environment,
@@ -161,7 +161,7 @@ async function optionalUserId(): Promise<string | null> {
     const h = getRequest().headers.get("authorization") ?? "";
     const token = h.startsWith("Bearer ") ? h.slice(7) : "";
     if (!token) return null;
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
     const { data } = await supabaseAdmin.auth.getUser(token);
     return data.user?.id ?? null;
   } catch {
@@ -206,7 +206,7 @@ export const startCheckout = createServerFn({ method: "POST" })
     const site = siteOrigin(data.origin);
     const phone = normalizePhone(data.phone);
     if (!/^254(7|1)\d{8}$/.test(phone)) throw new Error("Enter a valid Kenyan phone number");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
 
     const { data: event } = await supabaseAdmin.from("events").select("id, status").eq("id", data.eventId).single();
     if (!event || event.status !== "published") throw new Error("Tickets are not on sale");
@@ -314,7 +314,7 @@ export const getOrderStatus = createServerFn({ method: "POST" })
     z.object({ orderId: z.string().uuid(), accessToken: z.string().min(10).max(100), query: z.boolean().optional() }).parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
     const { data: order } = await supabaseAdmin
       .from("orders")
       .select("id, buyer_id, status, result_desc, mpesa_receipt, checkout_request_id, updated_at, access_token")
@@ -347,7 +347,7 @@ export const getOrderStatus = createServerFn({ method: "POST" })
 export const getPayoutSummary = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
     const { data: events } = await supabaseAdmin.from("events").select("id").eq("organizer_id", context.userId);
     const ids = (events ?? []).map((e) => e.id);
     let earned = 0;
@@ -392,7 +392,7 @@ export const requestPayout = createServerFn({ method: "POST" })
     const summary = await getPayoutSummaryInternal(context.userId);
     if (data.amount > summary.available) throw new Error("Amount exceeds your available balance");
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
     const originatorId = crypto.randomUUID();
     const { data: payout, error } = await supabaseAdmin
       .from("payouts")
@@ -425,7 +425,7 @@ export const requestPayout = createServerFn({ method: "POST" })
   });
 
 async function getPayoutSummaryInternal(userId: string) {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
   const { data: events } = await supabaseAdmin.from("events").select("id").eq("organizer_id", userId);
   const ids = (events ?? []).map((e) => e.id);
   let earned = 0;

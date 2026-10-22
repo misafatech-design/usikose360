@@ -35,7 +35,7 @@ export const getEmailSettingsAdmin = createServerFn({ method: "GET" })
     await assertAdmin(context.supabase, context.userId);
     const { getEmailSettings } = await import("./email/smtp.server");
     const s = await getEmailSettings();
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
     const { data: log } = await supabaseAdmin
       .from("email_log")
       .select("id, kind, recipient, subject, status, error, created_at")
@@ -77,7 +77,7 @@ export const saveEmailSettings = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     if (data.enabled && (!data.host || !data.from_email)) throw new Error("Host and From email are required");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/supabase-admin.server");
     const row: Record<string, unknown> = {
       id: 1,
       enabled: data.enabled,

@@ -181,3 +181,52 @@ export function testEmail(origin: string) {
 ${p("This test message was sent from your Usikose360 email settings. Ticket, password and payment emails will be delivered using this mail server.")}`;
   return { subject: "Usikose360 test email", html: layout({ origin, preheader: "Your email settings work", title: "Test", body }) };
 }
+
+export function ticketTransferEmail(o: {
+  origin: string;
+  recipientName: string;
+  senderName: string;
+  event: EventInfo;
+  ticket: TicketInfo;
+  note: string | null;
+  pdfUrl: string;
+  newAccount: boolean;
+}) {
+  const body = `${h1("You've received a ticket &#127915;")}
+${p(`Hi ${esc(o.recipientName || "there")}, <strong>${esc(o.senderName || "A friend")}</strong> transferred a ticket to you on Usikose360. It has a brand-new QR code that only you hold.`)}
+${o.note ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px;"><tr><td style="border-left:4px solid ${BRAND};padding:8px 14px;color:${DARK};font-style:italic;background:#f8fafc;">&ldquo;${esc(o.note)}&rdquo;</td></tr></table>` : ""}
+${eventBlock(o.event)}
+${ticketCard(o.origin, o.event, o.ticket)}
+${button(o.pdfUrl, "Download ticket (PDF)")}
+${o.newAccount ? p("We created a Usikose360 account for you so the ticket is safe in one place. Check your inbox for a separate email to set your password.", true) : button(`${o.origin}/tickets`, "Open my tickets", "ghost")}`;
+  return {
+    subject: `${o.senderName || "Someone"} sent you a ticket for ${o.event.title}`,
+    html: layout({ origin: o.origin, preheader: `A ticket for ${o.event.title} is now yours`, title: "Ticket received", body }),
+  };
+}
+
+export function tradeUpdateEmail(o: {
+  origin: string;
+  name: string;
+  heading: string;
+  message: string;
+  eventTitle: string;
+  price: number;
+  ctaUrl: string;
+  ctaLabel: string;
+  extra?: string;
+}) {
+  const body = `${h1(esc(o.heading))}
+${p(`Hi ${esc(o.name || "there")}, ${o.message}`)}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f8fafc;border:1px solid ${BORDER};border-radius:12px;margin:0 0 20px;"><tr><td style="padding:14px 18px;">
+<div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:${MUTED};">Resale trade</div>
+<div style="font-size:16px;font-weight:bold;color:${DARK};margin-top:4px;">${esc(o.eventTitle)}</div>
+<div style="font-size:18px;font-weight:bold;color:${BRAND};margin-top:6px;">${esc(kes(o.price))}</div>
+</td></tr></table>
+${o.extra ?? ""}
+${button(o.ctaUrl, o.ctaLabel)}`;
+  return {
+    subject: `${o.heading} — ${o.eventTitle}`,
+    html: layout({ origin: o.origin, preheader: o.heading, title: o.heading, body }),
+  };
+}

@@ -66,7 +66,7 @@ export function BuyResaleDialog({ listing, onOpenChange }: { listing: ListingWit
   const { user } = useAuth();
   const navigate = useNavigate();
   const [phone, setPhone] = useState("");
-  const [name, setName] = useState((user?.user_metadata?.full_name as string) ?? "");
+  const [name, setName] = useState((user?.user_metadata?.["full_name"] as string) ?? "");
   const [busy, setBusy] = useState(false);
 
   async function start() {
@@ -76,7 +76,8 @@ export function BuyResaleDialog({ listing, onOpenChange }: { listing: ListingWit
       const tradeId = await resale.buy(listing.id, normalizeMpesaPhone(phone), name.trim());
       notice("reserved", tradeId);
       onOpenChange(false);
-      navigate({ to: "/trades/$tradeId", params: { tradeId } });
+      toast.success("Ticket reserved for 30 minutes", { description: `Trade ${tradeId.slice(0, 8)}` });
+      navigate({ to: "/tickets" });
     } catch (e) {
       toast.error((e as Error).message);
     } finally {

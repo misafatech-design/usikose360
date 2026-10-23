@@ -84,7 +84,7 @@ export async function notifyTrade(tradeId: string, step: TradeStep, origin: stri
 
   const send = async (to: string | null, name: string, heading: string, message: string, ctaLabel: string, extra?: string) => {
     if (!to) return;
-    const m = tradeUpdateEmail({ origin, name, heading, message, eventTitle, price, ctaUrl: url, ctaLabel, extra });
+    const m = tradeUpdateEmail({ origin, name, heading, message, eventTitle, price, ctaUrl: url, ctaLabel, ...(extra ? { extra } : {}) });
     await sendMail({ to, subject: m.subject, html: m.html, kind: `resale_${step}` });
   };
 

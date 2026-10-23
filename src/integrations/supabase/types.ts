@@ -144,10 +144,13 @@ export type Database = {
           id: string
           is_featured: boolean
           organizer_id: string
+          resale_enabled: boolean
+          resale_max_markup_pct: number | null
           starts_at: string
           status: Database["public"]["Enums"]["event_status"]
           summary: string | null
           title: string
+          transfers_enabled: boolean
           updated_at: string
           venue: string | null
         }
@@ -161,10 +164,13 @@ export type Database = {
           id?: string
           is_featured?: boolean
           organizer_id: string
+          resale_enabled?: boolean
+          resale_max_markup_pct?: number | null
           starts_at: string
           status?: Database["public"]["Enums"]["event_status"]
           summary?: string | null
           title: string
+          transfers_enabled?: boolean
           updated_at?: string
           venue?: string | null
         }
@@ -178,10 +184,13 @@ export type Database = {
           id?: string
           is_featured?: boolean
           organizer_id?: string
+          resale_enabled?: boolean
+          resale_max_markup_pct?: number | null
           starts_at?: string
           status?: Database["public"]["Enums"]["event_status"]
           summary?: string | null
           title?: string
+          transfers_enabled?: boolean
           updated_at?: string
           venue?: string | null
         }
@@ -475,6 +484,217 @@ export type Database = {
         }
         Relationships: []
       }
+      resale_listings: {
+        Row: {
+          created_at: string
+          event_id: string
+          face_value_kes: number
+          id: string
+          note: string | null
+          payout_phone: string
+          price_kes: number
+          seller_id: string
+          seller_name: string | null
+          sold_at: string | null
+          status: string
+          ticket_id: string
+          ticket_type_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          face_value_kes?: number
+          id?: string
+          note?: string | null
+          payout_phone: string
+          price_kes: number
+          seller_id: string
+          seller_name?: string | null
+          sold_at?: string | null
+          status?: string
+          ticket_id: string
+          ticket_type_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          face_value_kes?: number
+          id?: string
+          note?: string | null
+          payout_phone?: string
+          price_kes?: number
+          seller_id?: string
+          seller_name?: string | null
+          sold_at?: string | null
+          status?: string
+          ticket_id?: string
+          ticket_type_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resale_listings_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resale_listings_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resale_listings_ticket_type_id_fkey"
+            columns: ["ticket_type_id"]
+            isOneToOne: false
+            referencedRelation: "ticket_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resale_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_system: boolean
+          sender_id: string | null
+          trade_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_system?: boolean
+          sender_id?: string | null
+          trade_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_system?: boolean
+          sender_id?: string | null
+          trade_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resale_messages_trade_id_fkey"
+            columns: ["trade_id"]
+            isOneToOne: false
+            referencedRelation: "resale_trades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resale_trades: {
+        Row: {
+          buyer_id: string
+          buyer_name: string | null
+          buyer_phone: string | null
+          cancel_reason: string | null
+          cancelled_at: string | null
+          created_at: string
+          dispute_reason: string | null
+          disputed_by: string | null
+          event_id: string
+          expires_at: string
+          id: string
+          listing_id: string
+          paid_at: string | null
+          payment_ref: string | null
+          price_kes: number
+          released_at: string | null
+          resolution: string | null
+          resolved_by: string | null
+          seller_id: string
+          seller_name: string | null
+          seller_phone: string
+          status: string
+          ticket_id: string
+          updated_at: string
+        }
+        Insert: {
+          buyer_id: string
+          buyer_name?: string | null
+          buyer_phone?: string | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string
+          dispute_reason?: string | null
+          disputed_by?: string | null
+          event_id: string
+          expires_at: string
+          id?: string
+          listing_id: string
+          paid_at?: string | null
+          payment_ref?: string | null
+          price_kes: number
+          released_at?: string | null
+          resolution?: string | null
+          resolved_by?: string | null
+          seller_id: string
+          seller_name?: string | null
+          seller_phone: string
+          status?: string
+          ticket_id: string
+          updated_at?: string
+        }
+        Update: {
+          buyer_id?: string
+          buyer_name?: string | null
+          buyer_phone?: string | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string
+          dispute_reason?: string | null
+          disputed_by?: string | null
+          event_id?: string
+          expires_at?: string
+          id?: string
+          listing_id?: string
+          paid_at?: string | null
+          payment_ref?: string | null
+          price_kes?: number
+          released_at?: string | null
+          resolution?: string | null
+          resolved_by?: string | null
+          seller_id?: string
+          seller_name?: string | null
+          seller_phone?: string
+          status?: string
+          ticket_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resale_trades_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resale_trades_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "resale_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resale_trades_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_pages: {
         Row: {
           content: string
@@ -501,6 +721,66 @@ export type Database = {
           updated_by?: string | null
         }
         Relationships: []
+      }
+      ticket_transfers: {
+        Row: {
+          created_at: string
+          event_id: string
+          from_user: string | null
+          id: string
+          kind: string
+          note: string | null
+          old_code: string | null
+          ticket_id: string
+          to_email: string | null
+          to_name: string | null
+          to_user: string | null
+          trade_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          from_user?: string | null
+          id?: string
+          kind?: string
+          note?: string | null
+          old_code?: string | null
+          ticket_id: string
+          to_email?: string | null
+          to_name?: string | null
+          to_user?: string | null
+          trade_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          from_user?: string | null
+          id?: string
+          kind?: string
+          note?: string | null
+          old_code?: string | null
+          ticket_id?: string
+          to_email?: string | null
+          to_name?: string | null
+          to_user?: string | null
+          trade_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_transfers_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ticket_transfers_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ticket_types: {
         Row: {
@@ -556,6 +836,7 @@ export type Database = {
           id: string
           order_id: string
           ticket_type_id: string
+          transfer_count: number
         }
         Insert: {
           attendee_email?: string | null
@@ -569,6 +850,7 @@ export type Database = {
           id?: string
           order_id: string
           ticket_type_id: string
+          transfer_count?: number
         }
         Update: {
           attendee_email?: string | null
@@ -582,6 +864,7 @@ export type Database = {
           id?: string
           order_id?: string
           ticket_type_id?: string
+          transfer_count?: number
         }
         Relationships: [
           {
@@ -633,6 +916,93 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _assert_event_open: {
+        Args: { _event_id: string }
+        Returns: {
+          category: string
+          city: string
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          is_featured: boolean
+          organizer_id: string
+          resale_enabled: boolean
+          resale_max_markup_pct: number | null
+          starts_at: string
+          status: Database["public"]["Enums"]["event_status"]
+          summary: string | null
+          title: string
+          transfers_enabled: boolean
+          updated_at: string
+          venue: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "events"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      _finish_release: {
+        Args: { _by: string; _kind: string; _trade_id: string }
+        Returns: string
+      }
+      _move_ticket: {
+        Args: {
+          _from: string
+          _kind: string
+          _note: string
+          _ticket_id: string
+          _to: string
+          _to_email: string
+          _to_name: string
+          _to_phone: string
+          _trade_id: string
+        }
+        Returns: string
+      }
+      _resale_sys_msg: {
+        Args: { _body: string; _trade_id: string }
+        Returns: undefined
+      }
+      admin_resolve_trade: {
+        Args: { _action: string; _note?: string; _trade_id: string }
+        Returns: undefined
+      }
+      cancel_resale_listing: {
+        Args: { _listing_id: string }
+        Returns: undefined
+      }
+      cancel_trade: {
+        Args: { _reason?: string; _trade_id: string }
+        Returns: undefined
+      }
+      claim_my_tickets: { Args: never; Returns: number }
+      create_resale_listing: {
+        Args: {
+          _note?: string
+          _phone: string
+          _price: number
+          _ticket_id: string
+        }
+        Returns: string
+      }
+      dispute_trade: {
+        Args: { _reason: string; _trade_id: string }
+        Returns: undefined
+      }
+      expire_resale_trades: { Args: never; Returns: number }
+      gift_ticket: {
+        Args: {
+          _note?: string
+          _ticket_id: string
+          _to_email: string
+          _to_name: string
+        }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -647,6 +1017,23 @@ export type Database = {
       is_event_staff: {
         Args: { _event_id: string; _user_id: string }
         Returns: boolean
+      }
+      is_trade_party: {
+        Args: { _trade_id: string; _user_id: string }
+        Returns: boolean
+      }
+      mark_trade_paid: {
+        Args: { _payment_ref: string; _trade_id: string }
+        Returns: undefined
+      }
+      release_trade: { Args: { _trade_id: string }; Returns: string }
+      start_resale_trade: {
+        Args: { _buyer_name: string; _buyer_phone: string; _listing_id: string }
+        Returns: string
+      }
+      update_resale_listing: {
+        Args: { _listing_id: string; _note?: string; _price: number }
+        Returns: undefined
       }
     }
     Enums: {

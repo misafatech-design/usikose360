@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      admission_log: {
+        Row: {
+          actor_name: string | null
+          actor_user: string | null
+          attendee_name: string | null
+          code: string
+          created_at: string
+          event_id: string
+          gate_pass_id: string | null
+          id: string
+          result: string
+          ticket_id: string | null
+          ticket_type: string | null
+          via: string | null
+        }
+        Insert: {
+          actor_name?: string | null
+          actor_user?: string | null
+          attendee_name?: string | null
+          code: string
+          created_at?: string
+          event_id: string
+          gate_pass_id?: string | null
+          id?: string
+          result: string
+          ticket_id?: string | null
+          ticket_type?: string | null
+          via?: string | null
+        }
+        Update: {
+          actor_name?: string | null
+          actor_user?: string | null
+          attendee_name?: string | null
+          code?: string
+          created_at?: string
+          event_id?: string
+          gate_pass_id?: string | null
+          id?: string
+          result?: string
+          ticket_id?: string | null
+          ticket_type?: string | null
+          via?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admission_log_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admission_log_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_log: {
         Row: {
           created_at: string
@@ -195,6 +255,85 @@ export type Database = {
           venue?: string | null
         }
         Relationships: []
+      }
+      gate_passes: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          email: string
+          event_id: string
+          failed_attempts: number
+          id: string
+          is_active: boolean
+          label: string
+          last_used_at: string | null
+          locked_until: string | null
+          secret_code: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          email: string
+          event_id: string
+          failed_attempts?: number
+          id?: string
+          is_active?: boolean
+          label: string
+          last_used_at?: string | null
+          locked_until?: string | null
+          secret_code: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          event_id?: string
+          failed_attempts?: number
+          id?: string
+          is_active?: boolean
+          label?: string
+          last_used_at?: string | null
+          locked_until?: string | null
+          secret_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gate_passes_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gate_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          pass_id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          pass_id: string
+          token?: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          pass_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gate_sessions_pass_id_fkey"
+            columns: ["pass_id"]
+            isOneToOne: false
+            referencedRelation: "gate_passes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mpesa_config: {
         Row: {
@@ -825,6 +964,9 @@ export type Database = {
       }
       tickets: {
         Row: {
+          admitted_by_name: string | null
+          admitted_by_user: string | null
+          admitted_via: string | null
           attendee_email: string | null
           attendee_name: string | null
           attendee_phone: string | null
@@ -832,6 +974,7 @@ export type Database = {
           code: string
           created_at: string
           event_id: string
+          gate_pass_id: string | null
           holder_id: string | null
           id: string
           order_id: string
@@ -839,6 +982,9 @@ export type Database = {
           transfer_count: number
         }
         Insert: {
+          admitted_by_name?: string | null
+          admitted_by_user?: string | null
+          admitted_via?: string | null
           attendee_email?: string | null
           attendee_name?: string | null
           attendee_phone?: string | null
@@ -846,6 +992,7 @@ export type Database = {
           code?: string
           created_at?: string
           event_id: string
+          gate_pass_id?: string | null
           holder_id?: string | null
           id?: string
           order_id: string
@@ -853,6 +1000,9 @@ export type Database = {
           transfer_count?: number
         }
         Update: {
+          admitted_by_name?: string | null
+          admitted_by_user?: string | null
+          admitted_via?: string | null
           attendee_email?: string | null
           attendee_name?: string | null
           attendee_phone?: string | null
@@ -860,6 +1010,7 @@ export type Database = {
           code?: string
           created_at?: string
           event_id?: string
+          gate_pass_id?: string | null
           holder_id?: string | null
           id?: string
           order_id?: string
@@ -945,6 +1096,18 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      _do_admit: {
+        Args: {
+          _actor_name: string
+          _actor_user: string
+          _code: string
+          _event_id: string
+          _pass_id: string
+          _undo: boolean
+          _via: string
+        }
+        Returns: Json
+      }
       _finish_release: {
         Args: { _by: string; _kind: string; _trade_id: string }
         Returns: string
@@ -967,9 +1130,17 @@ export type Database = {
         Args: { _body: string; _trade_id: string }
         Returns: undefined
       }
+      add_event_staff: {
+        Args: { _email: string; _event_id: string }
+        Returns: string
+      }
       admin_resolve_trade: {
         Args: { _action: string; _note?: string; _trade_id: string }
         Returns: undefined
+      }
+      admit_ticket: {
+        Args: { _code: string; _event_id: string; _undo?: boolean }
+        Returns: Json
       }
       cancel_resale_listing: {
         Args: { _listing_id: string }
@@ -980,6 +1151,15 @@ export type Database = {
         Returns: undefined
       }
       claim_my_tickets: { Args: never; Returns: number }
+      create_gate_pass: {
+        Args: {
+          _code?: string
+          _email: string
+          _event_id: string
+          _label: string
+        }
+        Returns: Json
+      }
       create_resale_listing: {
         Args: {
           _note?: string
@@ -994,6 +1174,13 @@ export type Database = {
         Returns: undefined
       }
       expire_resale_trades: { Args: never; Returns: number }
+      gate_admit: {
+        Args: { _code: string; _token: string; _undo?: boolean }
+        Returns: Json
+      }
+      gate_login: { Args: { _code: string; _email: string }; Returns: Json }
+      gate_logout: { Args: { _token: string }; Returns: undefined }
+      gate_session_info: { Args: { _token: string }; Returns: Json }
       gift_ticket: {
         Args: {
           _note?: string

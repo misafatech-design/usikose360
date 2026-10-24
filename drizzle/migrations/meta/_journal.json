@@ -15,6 +15,13 @@
       "when": 1792762567696,
       "tag": "0001_ticket_transfers_and_resale",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792841657895,
+      "tag": "0002_gate_passes_and_admission_tracking",
+      "breakpoints": true
     }
   ]
 }

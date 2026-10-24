@@ -24,7 +24,7 @@ export function TicketScanner({
   footer,
 }: {
   title: string;
-  subtitle?: string;
+  subtitle?: string | undefined;
   admitted: number;
   total: number;
   onCheck: (code: string, undo: boolean) => Promise<AdmitResult>;

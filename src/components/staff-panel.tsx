@@ -15,7 +15,7 @@ function gateUrl() {
 }
 
 /** Admission team: staff accounts and account-free gate passes (email + secret code). */
-export function StaffPanel({ eventId, eventTitle }: { eventId: string; eventTitle?: string }) {
+export function StaffPanel({ eventId, eventTitle }: { eventId: string; eventTitle?: string | undefined }) {
   return (
     <div className="mt-10">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
@@ -49,7 +49,7 @@ export function StaffPanel({ eventId, eventTitle }: { eventId: string; eventTitl
   );
 }
 
-function GatePasses({ eventId, eventTitle }: { eventId: string; eventTitle?: string }) {
+function GatePasses({ eventId, eventTitle }: { eventId: string; eventTitle?: string | undefined }) {
   const [label, setLabel] = useState("");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");

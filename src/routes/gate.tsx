@@ -134,7 +134,8 @@ function GateLogin({ onIn }: { onIn: (token: string) => void }) {
   }
 
   return (
-    <div className="hero-dark relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
+    <div className="dark relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-12 text-foreground">
+      <div className="pointer-events-none absolute -top-32 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/30 blur-3xl" />
       <div className="relative w-full max-w-sm">
         <Link to="/" className="mb-8 flex justify-center">
           <Logo />

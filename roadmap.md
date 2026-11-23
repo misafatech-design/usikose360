@@ -1,5 +1,12 @@
 # Roadmap
 
+## Current request: Scan crew invitations and vendor applications
+- [ ] Send event-bound scanner invitations by email with a PIN and crew link
+- [ ] Show organizer admission totals and per-scan activity, including organizer check-ins
+- [ ] Configure vendor applications, requirements, categories, minimum bids, and slot limits
+- [ ] Let vendors apply publicly and let organizers approve or decline submissions
+- [ ] Reuse M-Pesa checkout and payment feedback for approved vendor applications
+
 ## Carried over
 - [ ] Admin blog editor (create/edit/publish posts) + sidebar link
 - [ ] Admin Terms/Privacy editor + sidebar link

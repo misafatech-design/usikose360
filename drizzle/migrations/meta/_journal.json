@@ -22,6 +22,13 @@
       "when": 1792841657895,
       "tag": "0002_gate_passes_and_admission_tracking",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795437593161,
+      "tag": "0003_restrict_profile_and_event_cover_reads",
+      "breakpoints": true
     }
   ]
 }

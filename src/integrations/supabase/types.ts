@@ -193,6 +193,128 @@ export type Database = {
           },
         ]
       }
+      event_vendor_applications: {
+        Row: {
+          approved_bid_kes: number | null
+          bid_kes: number
+          business_name: string
+          category_id: string
+          checkout_request_id: string | null
+          created_at: string
+          email: string
+          environment: string | null
+          event_id: string
+          id: string
+          merchant_request_id: string | null
+          mpesa_receipt: string | null
+          notes: string | null
+          paid_at: string | null
+          phone: string
+          result_desc: string | null
+          status: string
+          updated_at: string
+          vendor_name: string
+          vendor_token_hash: string
+        }
+        Insert: {
+          approved_bid_kes?: number | null
+          bid_kes: number
+          business_name: string
+          category_id: string
+          checkout_request_id?: string | null
+          created_at?: string
+          email: string
+          environment?: string | null
+          event_id: string
+          id?: string
+          merchant_request_id?: string | null
+          mpesa_receipt?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          phone: string
+          result_desc?: string | null
+          status?: string
+          updated_at?: string
+          vendor_name: string
+          vendor_token_hash: string
+        }
+        Update: {
+          approved_bid_kes?: number | null
+          bid_kes?: number
+          business_name?: string
+          category_id?: string
+          checkout_request_id?: string | null
+          created_at?: string
+          email?: string
+          environment?: string | null
+          event_id?: string
+          id?: string
+          merchant_request_id?: string | null
+          mpesa_receipt?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          phone?: string
+          result_desc?: string | null
+          status?: string
+          updated_at?: string
+          vendor_name?: string
+          vendor_token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_vendor_applications_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "event_vendor_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_vendor_applications_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_vendor_categories: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          event_id: string
+          id: string
+          min_bid_kes: number
+          name: string
+          spaces: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          event_id: string
+          id?: string
+          min_bid_kes?: number
+          name: string
+          spaces?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          event_id?: string
+          id?: string
+          min_bid_kes?: number
+          name?: string
+          spaces?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_vendor_categories_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           category: string
@@ -212,6 +334,8 @@ export type Database = {
           title: string
           transfers_enabled: boolean
           updated_at: string
+          vendor_applications_enabled: boolean
+          vendor_requirements: string | null
           venue: string | null
         }
         Insert: {
@@ -232,6 +356,8 @@ export type Database = {
           title: string
           transfers_enabled?: boolean
           updated_at?: string
+          vendor_applications_enabled?: boolean
+          vendor_requirements?: string | null
           venue?: string | null
         }
         Update: {
@@ -252,6 +378,8 @@ export type Database = {
           title?: string
           transfers_enabled?: boolean
           updated_at?: string
+          vendor_applications_enabled?: boolean
+          vendor_requirements?: string | null
           venue?: string | null
         }
         Relationships: []
@@ -1087,6 +1215,8 @@ export type Database = {
           title: string
           transfers_enabled: boolean
           updated_at: string
+          vendor_applications_enabled: boolean
+          vendor_requirements: string | null
           venue: string | null
         }
         SetofOptions: {
@@ -1214,6 +1344,15 @@ export type Database = {
         Returns: undefined
       }
       release_trade: { Args: { _trade_id: string }; Returns: string }
+      review_vendor_application: {
+        Args: {
+          _action: string
+          _application_id: string
+          _approved_bid_kes: number
+          _vendor_token_hash: string
+        }
+        Returns: Json
+      }
       start_resale_trade: {
         Args: { _buyer_name: string; _buyer_phone: string; _listing_id: string }
         Returns: string
